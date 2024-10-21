@@ -41,8 +41,6 @@ const ProductList = () => {
                     </li>
                 ))}
             </ul>
-
-            <p> hello samuel</p>
         </div>
     );
 };
