@@ -9,8 +9,10 @@ const ProductList = () => {
 
   useEffect(() => {
     // Fetch data from the C# API using the fetch API
-    fetch("https://localhost:7276/api/product") // Make sure to use the correct port for your C# backend
+    fetch("https://localhost:7276/api/product")
+    // fetch("http://10.0.0.1:8080/api/product")
       .then((response) => {
+        console.log(response);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -45,7 +47,7 @@ const ProductList = () => {
             <div className="card h-100">
               <div className="card-body">
               {product.imagePath && (
-            <img src={`/${product.imagePath}`} alt={product.name} width="100" />
+            <img src={`https://localhost:7276/${product.imagePath}`} alt={product.name} width="200" />
           )}
                 <h5 className="card-title">{product.name}</h5>
                 <p className="card-text">${product.price.toFixed(2)}</p>

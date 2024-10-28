@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import DeleteButton from "../Components/DeleteButton";
 
 const ProductsEdit = () => {
   const { id } = useParams(); // Get the product ID from the URL
@@ -19,7 +20,6 @@ const ProductsEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
 
   // Fetch product data when the component loads
   useEffect(() => {
@@ -79,15 +79,29 @@ const ProductsEdit = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const handleDeleteSuccess = () => {
+    navigate("/products");
+  };
+
   return (
     <div className="container mt-5">
       <Link to={`/products`} className="btn btn-secondary">
         Back to Products
       </Link>
-      <h1>Edit Product: {product.name}</h1>
+      <div className="text-align-center">
+        <h1>Edit Product:</h1>
+        <h1>{product.name}</h1>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="row mt-5">
           <div className="row">
+            <div className="col-md-12 m-5">
+              <img
+                src={`https://localhost:7276/${product.imagePath}`}
+                alt={product.name}
+                width="500"
+              />
+            </div>
             <div className="col-md-6">
               <label htmlFor="productImage" className="form-label">
                 Product Image:
@@ -154,7 +168,7 @@ const ProductsEdit = () => {
               className="form-control"
               id="BrandName"
               name="BrandName"
-              value={product.BrandName}
+              value={product.brandName}
               onChange={handleChange}
               required
             />
@@ -192,7 +206,7 @@ const ProductsEdit = () => {
               className="form-control"
               id="category"
               name="category"
-              value={product.category}
+              value={product.category_id}
               onChange={handleChange}
               required
             />
@@ -288,16 +302,24 @@ const ProductsEdit = () => {
               className="form-control"
               id="EAN13Barcode"
               name="EAN13Barcode"
-              value={product.EAN13Barcode}
+              value={product.eaN13Barcode}
               onChange={handleChange}
               required
             />
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          Save Changes
-        </button>
+        <div className="mb-3 d-flex justify-content-between align-items-center">
+          <button type="submit" className="btn btn-primary">
+            Save Changes
+          </button>
+
+          <DeleteButton
+            endpoint="https://localhost:7276/api/product"
+            id={product.id}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        </div>
       </form>
     </div>
   );
