@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
 import { Link } from "react-router-dom";
 
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
+function UsersHome() {
+  const [Users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch data from the C# API using the fetch API
-    fetch("https://localhost:7276/api/product")
-    // fetch("http://10.0.0.1:8080/api/product")
+    fetch("https://localhost:7276/api/user") // Make sure to use the correct port for your C# backend
       .then((response) => {
         console.log(response);
         if (!response.ok) {
@@ -19,7 +17,7 @@ const ProductList = () => {
         return response.json(); // Convert response to JSON
       })
       .then((data) => {
-        setProducts(data); // Update products state with the data
+        setUsers(data); // Update Users state with the data
         setLoading(false); // Stop loading once data is fetched
       })
       .catch((error) => {
@@ -38,25 +36,19 @@ const ProductList = () => {
       style={{ minHeight: "100vh" }}
     >
       <div className="row text-center">
-      <Link to={`/`} className="btn btn-secondary mb-3">
-        Back to Dashboard
-      </Link>
-        <h1 className="mb-5">List of Products</h1>
-        {products.map((product) => (
-          <div className="col-12 col-md-6 col-lg-4 mb-4" key={product.id}>
+        <h1 className="mb-5">List of Users</h1>
+        <Link to="/Users/new" className="btn btn-primary mb-4">
+          Add User
+        </Link>
+        {Users.map((User) => (
+          <div className="col-12 col-md-6 col-lg-4 mb-4" key={User.Userid}>
             <div className="card h-100">
               <div className="card-body">
-              {product.imagePath && (
-            <img src={`https://localhost:7276/${product.imagePath}`} alt={product.name} width="200" />
-          )}
-                <h5 className="card-title">{product.name}</h5>
-                <p className="card-text">${product.price.toFixed(2)}</p>
+                <h5 className="card-title">{User.username}</h5>
+                <p className="card-text">{User.email}</p>
 
-                <Link
-                  to={`/products/${product.id}`}
-                  className="btn btn-primary"
-                >
-                  View Product
+                <Link to={`/Users/${User.id}`} className="btn btn-primary">
+                  View User
                 </Link>
               </div>
             </div>
@@ -65,6 +57,6 @@ const ProductList = () => {
       </div>
     </div>
   );
-};
+}
 
-export default ProductList;
+export default UsersHome;

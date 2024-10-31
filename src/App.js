@@ -1,50 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
+import { Routes, Route } from "react-router-dom";
+import Header from "./Components/Header";
+import DashboardPage from "./Components/Dashboard";
+import ProductsHome from "./Products/ProductsHome";
+import ProductsEdit from "./Products/ProductsEdit";
+import CustomersHome from "./Customers/CustomersHome";
+import CustomersEdit from "./Customers/CustomerEdit";
+import UsersHome from "./Users/UsersHome";
+import UsersEdit from "./Users/UserEdit";
+import UsersCreate from "./Users/CreateUser";
+import CategoriesHome from "./Categories/CategoriesHome";
+import CategoriesEdit from "./Categories/CategoriesEdit";
+import TransactionsHome from "./Transactions/TransactionHome";
+import TransactionsEdit from "./Transactions/TransactionEdit";
+import AnalyticsHome from "./Analytics/AnalyticsHome";
+import AnalyticsEdit from "./Analytics/AnalyticsEdit";
+import IndivAnalysis from "./Analytics/IndivAnalysis";
 
-const ProductList = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+function App() {
+  return (
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/products" element={<ProductsHome />} />
+        <Route path="/products/:id" element={<ProductsEdit />} />
 
-    useEffect(() => {
-        // Fetch data from the C# API using the fetch API
-        fetch('https://localhost:7276/api/product') // Make sure to use the correct port for your C# backend
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // Convert response to JSON
-            })
-            .then(data => {
-                setProducts(data); // Update products state with the data
-                setLoading(false);  // Stop loading once data is fetched
-            })
-            .catch(error => {
-                setError(error);    // If an error occurs, catch it and update the error state
-                setLoading(false);  // Stop loading even if there was an error
-            });
-    }, []);
+        {/* Customer Routes */}
+        <Route path="/customers" element={<CustomersHome />} />
+        <Route path="/customers/:id" element={<CustomersEdit />} />
 
-    // Handle loading, error, and data display states
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+        {/* Users Routes */}
+        <Route path="/users" element={<UsersHome />} />
+        <Route path="/users/:id" element={<UsersEdit />} />
+        <Route path="/users/new" element={<UsersCreate />} />
 
-    console.log(products); // Check if products are being set correctly
+        {/* Categories Routes */}
+        <Route path="/categories" element={<CategoriesHome />} />
+        <Route path="/categories/:id" element={<CategoriesEdit />} />
 
+        {/* Transactions Routes */}
+        <Route path="/transactions" element={<TransactionsHome />} />
+        <Route path="/transactions/:id" element={<TransactionsEdit />} />
 
-    return (
-        <div>
-            <h1>Product List</h1>
-            <ul>
-                {products.map(product => (
-                    <li key={product.id}>
-                        {product.name} - ${product.price}
-                    </li>
-                ))}
-            </ul>
+        {/* Analytics Routes */}
+        <Route path="/analytics" element={ <AnalyticsHome /> } />
+        <Route path="/analytics/:id" element={<IndivAnalysis />} />
+      </Routes>
+    </>
+  );
+}
 
-            <p> hello samuel</p>
-        </div>
-    );
-};
-
-export default ProductList;
+export default App;
