@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useNavigate } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -11,8 +12,11 @@ const CategoryList = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const navigate = useNavigate();
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+
   useEffect(() => {
-    fetch("https://localhost:7276/api/Category")
+    fetch(`${apiUrl}/api/Category`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -45,7 +49,7 @@ const CategoryList = () => {
   };
 
   const handleDelete = (id) => {
-    fetch(`https://localhost:7276/api/Category/${id}`, {
+    fetch(`${apiUrl}/api/Category/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -63,7 +67,7 @@ const CategoryList = () => {
 
   const handleAddCategory = () => {
     const newCategory = { name: newCategoryName };
-    fetch("https://localhost:7276/api/Category", {
+    fetch(`${apiUrl}/api/Category`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,6 +91,7 @@ const CategoryList = () => {
 
   if (loading) return <div className="text-center">Loading...</div>;
   if (error) return <div className="text-center">Error: {error.message}</div>;
+  if (categories.length === 0) return <NotFound item="Categories" />;
 
   return (
     <div className="container">

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 const CustomerEdit = () => {
   const { id } = useParams(); // Get the customer ID from the URL
   const navigate = useNavigate(); // For navigation after update
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
 
   const [customer, setCustomer] = useState({
     firstName: "",
@@ -17,7 +21,7 @@ const CustomerEdit = () => {
 
   // Fetch customer data when the component loads
   useEffect(() => {
-    fetch(`https://localhost:7276/api/customer/${id}`)
+    fetch(`${apiUrl}/api/customer/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch customer details.");
@@ -47,7 +51,7 @@ const CustomerEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Send the updated customer data to the API (PUT request)
-    fetch(`https://localhost:7276/api/customer/${id}`, {
+    fetch(`${apiUrl}/api/customer/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -71,6 +75,7 @@ const CustomerEdit = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!customer) return <NotFound item="Customer" />;
 
   return (
     <div className="container mt-5">
@@ -179,7 +184,9 @@ const CustomerEdit = () => {
         <button type="submit" className="btn btn-primary">
           Save Changes
         </button>
+
       </form>
+        <Link to={`/Customers/${id}/transactions`} className="btn btn-secondary">View Customers Transactions</Link>
     </div>
   );
 };

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 function UsersHome() {
   const [Users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     // Fetch data from the C# API using the fetch API
-    fetch("https://localhost:7276/api/user") // Make sure to use the correct port for your C# backend
+    fetch(`${apiUrl}/api/user`) // Make sure to use the correct port for your C# backend
       .then((response) => {
         console.log(response);
         if (!response.ok) {
@@ -29,6 +32,7 @@ function UsersHome() {
   // Handle loading, error, and data display states
   if (loading) return <div className="text-center">Loading...</div>;
   if (error) return <div className="text-center">Error: {error.message}</div>;
+  if (Users.length === 0) return <NotFound item="Users"/>;
 
   return (
     <div
