@@ -2,11 +2,12 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
 import { Routes, Route } from "react-router-dom";
 import Header from "./Components/Header";
-import DashboardPage from "./Components/Dashboard";
+import DashboardPage from "./Dashboard/Dashboard";
 import ProductsHome from "./Products/ProductsHome";
 import ProductsEdit from "./Products/ProductsEdit";
 import CustomersHome from "./Customers/CustomersHome";
 import CustomersEdit from "./Customers/CustomerEdit";
+import CustomerTransactions from "./Customers/CustomerTransactions";
 import UsersHome from "./Users/UsersHome";
 import UsersEdit from "./Users/UserEdit";
 import UsersCreate from "./Users/CreateUser";
@@ -30,6 +31,7 @@ function App() {
         {/* Customer Routes */}
         <Route path="/customers" element={<CustomersHome />} />
         <Route path="/customers/:id" element={<CustomersEdit />} />
+        <Route path="/customers/:id/transactions" element={<CustomerTransactions />} />
 
         {/* Users Routes */}
         <Route path="/users" element={<UsersHome />} />

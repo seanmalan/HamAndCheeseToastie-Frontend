@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import NotFound from '../Components/NotFound';
 
 function CategoriesEdit() {
   const { id } = useParams(); // Get id from URL
@@ -7,11 +8,12 @@ function CategoriesEdit() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-console.log(id);
+  const apiUrl = process.env.REACT_APP_API_URL;
+
 
   // Fetch products linked to this id
   useEffect(() => {
-    fetch(`https://localhost:7276/api/category/${id}`)
+    fetch(`${apiUrl}/api/category/${id}`)
       .then((response) => {
         if (!response.ok) {
           console.log(response);
@@ -31,6 +33,7 @@ console.log(id);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!products) return <NotFound item="Products" />;
 
   return (
     <div>

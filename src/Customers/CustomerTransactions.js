@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import NotFound from "../Components/NotFound";
 
 const TransactionList = () => {
+  const {id} = useParams();
   const [transactions, setTransactions] = useState([]);
+  const [customer, setCustomer] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const apiUrl = process.env.REACT_APP_API_URL;
 
   
   useEffect(() => {
-    fetch(`${apiUrl}/api/Transaction`) // Replace with your API URL
+    fetch(`${apiUrl}/api/Customer/${id}/transactions`) // Replace with your API URL
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -19,7 +20,8 @@ const TransactionList = () => {
         return response.json();
       })
       .then((data) => {
-        setTransactions(data);
+        setTransactions(data.transactions);
+        setCustomer(data.customer);
         setLoading(false);
       })
       .catch((error) => {
@@ -37,31 +39,28 @@ const TransactionList = () => {
   return (
     <div className="container mt-4">
       <h1 className="mb-4">Transaction List</h1>
+      customer: {customer.firstName} {customer.lastName}
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Date</th>
             <th>Total Amount</th>
             <th>Discount</th>
             <th>Payment Method</th>
             <th>Tax Amount</th>
             <th>Cashier ID</th>
-            <th>Customer ID</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((transaction) => (
             <tr key={transaction.transactionId}>
-              <td>{transaction.transactionId}</td>
               <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
               <td>${transaction.totalAmount}</td>
               <td>${transaction.discount}</td>
               <td>{transaction.paymentMethod}</td>
               <td>${transaction.taxAmount}</td>
               <td>{transaction.cashierId}</td>
-              <td>{transaction.customerId}</td>
               <td>
                 <Link to={`/transactions/${transaction.transactionId}`} className="btn btn-primary btn-sm">
                   View

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import DeleteButton from "../Components/DeleteButton";
+import NotFound from "../Components/NotFound";
 
 const ProductsEdit = () => {
   const { id } = useParams(); // Get the product ID from the URL
@@ -21,9 +22,11 @@ const ProductsEdit = () => {
   const [error, setError] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   // Fetch product data when the component loads
   useEffect(() => {
-    fetch(`https://localhost:7276/api/product/${id}`)
+    fetch(`${apiUrl}/api/product/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch product details.");
@@ -54,7 +57,7 @@ const ProductsEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Send the updated product to the API (PUT request)
-    fetch(`https://localhost:7276/api/product/${id}`, {
+    fetch(`${apiUrl}/api/product/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -78,6 +81,7 @@ const ProductsEdit = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!product) return <NotFound item="Product"/>;
 
   const handleDeleteSuccess = () => {
     navigate("/products");
@@ -97,7 +101,7 @@ const ProductsEdit = () => {
           <div className="row">
             <div className="col-md-12 m-5">
               <img
-                src={`https://localhost:7276/${product.imagePath}`}
+                src={`${apiUrl}/${product.imagePath}`}
                 alt={product.name}
                 width="500"
               />
@@ -315,7 +319,7 @@ const ProductsEdit = () => {
           </button>
 
           <DeleteButton
-            endpoint="https://localhost:7276/api/product"
+            endpoint= "/api/product"
             id={product.id}
             onDeleteSuccess={handleDeleteSuccess}
           />

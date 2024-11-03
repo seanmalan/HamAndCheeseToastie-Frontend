@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
 import { Link } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 function CustomersHome() {
   const [Customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  
   useEffect(() => {
     // Fetch data from the C# API using the fetch API
-    fetch("https://localhost:7276/api/customer") // Make sure to use the correct port for your C# backend
+    fetch(`${apiUrl}/api/customer`) // Make sure to use the correct port for your C# backend
       .then((response) => {
         console.log(response);
         if (!response.ok) {
@@ -30,6 +34,7 @@ function CustomersHome() {
   // Handle loading, error, and data display states
   if (loading) return <div className="text-center">Loading...</div>;
   if (error) return <div className="text-center">Error: {error.message}</div>;
+  if (Customers.length === 0) return <NotFound item="Customers"/>;
 
   return (
     <div
