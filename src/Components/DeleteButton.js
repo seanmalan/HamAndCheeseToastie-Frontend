@@ -3,10 +3,15 @@ import React from "react";
 const DeleteButton = ({ endpoint, id, onDeleteSuccess }) => {
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+
+
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${endpoint}/${id}`, {
+      const response = await fetch(`${apiUrl}/${endpoint}/${id}`, {
         method: "DELETE",
       });
 

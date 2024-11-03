@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 const UserEdit = () => {
   const { id } = useParams(); // Get the user ID from the URL
   const navigate = useNavigate(); // For navigation after update
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const [user, setUser] = useState({
     username: "",
@@ -19,7 +21,7 @@ const UserEdit = () => {
 
   // Fetch user data when the component loads
   useEffect(() => {
-    fetch(`https://localhost:7276/api/user/${id}`)
+    fetch(`${apiUrl}/api/user/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch user details.");
@@ -46,7 +48,7 @@ const UserEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`https://localhost:7276/api/user/${id}`, {
+    fetch(`${apiUrl}/api/user/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -70,6 +72,7 @@ const UserEdit = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!user) return <NotFound item="User" />;
 
   return (
     <div className="container mt-5">
@@ -173,7 +176,7 @@ const UserEdit = () => {
             type="button"
             className="btn btn-danger"
             onClick={() => {
-              fetch(`https://localhost:7276/api/user/${id}`, {
+              fetch(`${apiUrl}/api/user/${id}`, {
                 method: "DELETE",
               })
                 .then((response) => {

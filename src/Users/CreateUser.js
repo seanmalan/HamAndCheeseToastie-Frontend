@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const UserCreate = () => {
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   
   const [user, setUser] = useState({
     username: "",
@@ -25,7 +27,7 @@ const UserCreate = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("https://localhost:7276/api/user", {
+    fetch(`${apiUrl}/api/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

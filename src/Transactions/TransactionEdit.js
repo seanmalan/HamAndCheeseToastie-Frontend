@@ -13,11 +13,13 @@ function TransactionEdit() {
     cashierId: "",
     customerId: "",
   });
+
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`https://localhost:7276/api/Transaction/${id}`) // Replace with your API URL
+    fetch(`${apiUrl}/api/Transaction/${id}`) // Replace with your API URL
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
