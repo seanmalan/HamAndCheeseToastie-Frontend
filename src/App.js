@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
 import { Routes, Route } from "react-router-dom";
 import Header from "./Components/Header";
 import DashboardPage from "./Dashboard/Dashboard";
+import LoginPage from "./Auth/Login";
+import RegisterPage from "./Auth/Register";
 import ProductsHome from "./Products/ProductsHome";
 import ProductsEdit from "./Products/ProductsEdit";
 import CustomersHome from "./Customers/CustomersHome";
@@ -24,6 +26,11 @@ function App() {
     <>
       <Header />
       <Routes>
+        {/* Auth Routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Dashboard Route */}
         <Route path="/" element={<DashboardPage />} />
         <Route path="/products" element={<ProductsHome />} />
         <Route path="/products/:id" element={<ProductsEdit />} />
@@ -31,7 +38,10 @@ function App() {
         {/* Customer Routes */}
         <Route path="/customers" element={<CustomersHome />} />
         <Route path="/customers/:id" element={<CustomersEdit />} />
-        <Route path="/customers/:id/transactions" element={<CustomerTransactions />} />
+        <Route
+          path="/customers/:id/transactions"
+          element={<CustomerTransactions />}
+        />
 
         {/* Users Routes */}
         <Route path="/users" element={<UsersHome />} />
@@ -47,7 +57,7 @@ function App() {
         <Route path="/transactions/:id" element={<TransactionsEdit />} />
 
         {/* Analytics Routes */}
-        <Route path="/analytics" element={ <AnalyticsHome /> } />
+        <Route path="/analytics" element={<AnalyticsHome />} />
         <Route path="/analytics/:id" element={<IndivAnalysis />} />
       </Routes>
     </>

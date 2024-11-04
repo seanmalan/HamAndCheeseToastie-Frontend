@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TotalSalesDashCard from "./TotalSalesDashCard";
 import TotalTransactionsDashboard from "./TotalTransDashCard";
@@ -6,14 +6,21 @@ import TotalCustomersDashCard from "./TotalCustomersDashCard";
 import CustomerInsightsWidget from "./CustomerInsightsWidget";
 import RecentTransactionsDashboard from "./RecentTransactionsDashWidget";
 import LowStockNotification from "./LowStockNotification";
+import { AuthContext } from "../Context/AuthContext";
+import NotLoggedIn from "../Auth/NotLoggedIn";
 
 export default function Dashboard() {
+  const { isAuthenticated, user } = useContext(AuthContext);
+
+  if (!isAuthenticated) {
+    return <NotLoggedIn />;
+  }
+
   return (
     <div className="container-fluid">
       <header className="d-flex justify-content-between align-items-center p-3 bg-primary text-white">
-        <h1>Your Logo</h1>
         <div className="user-profile">
-          <span>User Name</span>
+          <span>{user.username}</span>
         </div>
       </header>
       <div className="row">
