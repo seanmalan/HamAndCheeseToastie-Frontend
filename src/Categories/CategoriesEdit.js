@@ -35,11 +35,16 @@ function CategoriesEdit() {
   if (error) return <div>Error: {error}</div>;
   if (!products) return <NotFound item="Products" />;
 
+  console.log(products);
+
+  
   return (
     <div>
     <Link to={`/categories`} className="btn btn-secondary">
         Back to Categories
       </Link>
+
+      {products.categoryName}
       <h1>Products in Category {id}</h1>
       {products.length > 0 ? (
         <ul>
