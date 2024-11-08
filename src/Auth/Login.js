@@ -1,12 +1,12 @@
 // src/Login.js
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
+  const { login, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const apiUrl = process.env.REACT_APP_API_URL; // Get API URL from .env
@@ -21,8 +21,14 @@ const Login = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        login(data); // Pass the token and user info to AuthContext
-        navigate("/dashboard"); // Redirect to the dashboard or any other page
+        // Ensure login is called with the correct data
+        login({
+          token: data.Token,
+          username: data.Username,
+          email: data.Email,
+        });
+        console.log("Login successful:", data);
+        navigate("/dashboard");
       } else {
         console.error("Login failed:", data.message);
       }
@@ -30,6 +36,12 @@ const Login = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <>

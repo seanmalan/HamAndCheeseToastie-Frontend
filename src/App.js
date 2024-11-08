@@ -18,8 +18,8 @@ import CategoriesEdit from "./Categories/CategoriesEdit";
 import TransactionsHome from "./Transactions/TransactionHome";
 import TransactionsEdit from "./Transactions/TransactionEdit";
 import AnalyticsHome from "./Analytics/AnalyticsHome";
-import AnalyticsEdit from "./Analytics/AnalyticsEdit";
 import IndivAnalysis from "./Analytics/IndivAnalysis";
+import PrivateRoute from "./Auth/PrivateRoute";
 
 function App() {
   return (
@@ -30,35 +30,133 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Dashboard Route */}
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/products" element={<ProductsHome />} />
-        <Route path="/products/:id" element={<ProductsEdit />} />
-
-        {/* Customer Routes */}
-        <Route path="/customers" element={<CustomersHome />} />
-        <Route path="/customers/:id" element={<CustomersEdit />} />
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+              <DashboardPage />
+          }
+        />
+        <Route
+          path="/Dashboard"
+          element={
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Products"
+          element={
+            <PrivateRoute>
+              <ProductsHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/products/:id"
+          element={
+            <PrivateRoute>
+              <ProductsEdit />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/customers"
+          element={
+            <PrivateRoute>
+              <CustomersHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/customers/:id"
+          element={
+            <PrivateRoute>
+              <CustomersEdit />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/customers/:id/transactions"
-          element={<CustomerTransactions />}
+          element={
+            <PrivateRoute>
+              <CustomerTransactions />
+            </PrivateRoute>
+          }
         />
-
-        {/* Users Routes */}
-        <Route path="/users" element={<UsersHome />} />
-        <Route path="/users/:id" element={<UsersEdit />} />
-        <Route path="/users/new" element={<UsersCreate />} />
-
-        {/* Categories Routes */}
-        <Route path="/categories" element={<CategoriesHome />} />
-        <Route path="/categories/:id" element={<CategoriesEdit />} />
-
-        {/* Transactions Routes */}
-        <Route path="/transactions" element={<TransactionsHome />} />
-        <Route path="/transactions/:id" element={<TransactionsEdit />} />
-
-        {/* Analytics Routes */}
-        <Route path="/analytics" element={<AnalyticsHome />} />
-        <Route path="/analytics/:id" element={<IndivAnalysis />} />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <UsersHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:id"
+          element={
+            <PrivateRoute>
+              <UsersEdit />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/new"
+          element={
+            <PrivateRoute>
+              <UsersCreate />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <PrivateRoute>
+              <CategoriesHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/categories/:id"
+          element={
+            <PrivateRoute>
+              <CategoriesEdit />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <PrivateRoute>
+              <TransactionsHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/transactions/:id"
+          element={
+            <PrivateRoute>
+              <TransactionsEdit />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <PrivateRoute>
+              <AnalyticsHome />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/analytics/:id"
+          element={
+            <PrivateRoute>
+              <IndivAnalysis />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );

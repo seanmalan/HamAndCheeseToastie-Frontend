@@ -1,40 +1,39 @@
-// src/context/AuthContext.js
+// AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
-import { login, logout } from "../Services/AuthService";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState({}); // Initialize user as an empty object
 
+  // Check for token in local storage to persist authentication state
   useEffect(() => {
-    // Check if token is in localStorage on initial load
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-      setUser({ username: "User" }); // Placeholder; ideally you'd parse token or fetch user data
-    }
+    const savedToken = localStorage.getItem("token");
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedToken) setToken(savedToken);
+    if (savedUser) setUser(savedUser);
   }, []);
 
-  const handleLogin = async (username, password) => {
-    try {
-      const data = await login(username, password);
-      setIsAuthenticated(true);
-      setUser({ username: data.username });
-    } catch (error) {
-      console.error("Login failed", error);
-    }
+  const login = (data) => {
+    console.log(data);
+    setToken(data.token);
+    setUser({ username: data.username, email: data.email }); // Set user data
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify({ username: data.username, email: data.email }));
   };
 
-  const handleLogout = () => {
-    logout();
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = () => {
+    setToken(null);
+    setUser({});
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
+
+  const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

@@ -20,7 +20,7 @@ export default function Dashboard() {
     <div className="container-fluid">
       <header className="d-flex justify-content-between align-items-center p-3 bg-primary text-white">
         <div className="user-profile">
-          <span>{user.username}</span>
+          <span>{user?.username || "User"}</span>
         </div>
       </header>
       <div className="row">

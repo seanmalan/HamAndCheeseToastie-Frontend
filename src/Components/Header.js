@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 
 const Header = () => {
-  const { authUser, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   return (
     <div className="HeaderContainer">
@@ -52,9 +52,9 @@ const Header = () => {
             </ul>
 
             <div className="user">
-              {authUser ? (
+              {isAuthenticated ? (
                 <>
-                  <span>Welcome, {authUser.name}</span>
+                  <span>Welcome, {user?.username || "User"}</span>
                   <button onClick={logout} className="btn btn-link">
                     Logout
                   </button>
