@@ -16,19 +16,27 @@ function CustomersHome() {
     const fetchWithAuth = (url, options = {}) => {
       const token = localStorage.getItem("token");
       console.log(token);
-      return fetch(url, {
+      if (!token) {
+        setError({ message: "No authentication token found" });
+        return;
+      }
+      const requestOptions = {
         ...options,
         headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          Authorization: `Bearer ${token}`,
           ...options.headers,
-          Authorization: `Bearer ${token}`, // Set Authorization header with token
         },
-      });
+      };
+  
+      console.log('Request options:', requestOptions); // Debug request
+      return fetch(url, requestOptions);
     };
 
     const fetchCustomers = async () => {
       try {
         const response = await fetchWithAuth(url);
-
         // Check for Unauthorized (401) status
         if (response.status === 401) {
           setError({ message: "Not authenticated. Please log in." });

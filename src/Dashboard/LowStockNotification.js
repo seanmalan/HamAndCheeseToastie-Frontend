@@ -23,8 +23,8 @@ function LowStockNotification() {
       })
       .then((data) => {
         // Assuming data is an array of products with properties: id, name, currentStockLevel, and minimumStockLevel
-        console.log(data)
-        
+        console.log(data);
+
         setLowStockProducts(data); // Set low stock products
         setLoading(false); // Stop loading
       })
@@ -46,31 +46,34 @@ function LowStockNotification() {
     <div>
       {lowStockProducts.length > 0 ? (
         <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Current Stock</th>
-            <th>Minimum Stock</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {lowStockProducts.map((product) => (
-            <tr key={product.productName}>
-              <td>{product.productId}</td>
-              <td>{product.productName}</td>
-              <td>{product.currentStockLevel}</td>
-              <td>{product.minimumStockLevel}</td>
-              <td>
-                <Link to={`/products/${product.productId}`} className="btn btn-primary btn-sm">
-                  View
-                </Link>
-              </td>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Current Stock</th>
+              <th>Minimum Stock</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {lowStockProducts.map((product) => (
+              <tr key={product.productId}>
+                <td>{product.productId}</td>
+                <td>{product.productName}</td>
+                <td>{product.currentStockLevel}</td>
+                <td>{product.minimumStockLevel}</td>
+                <td>
+                  <Link
+                    to={`/products/${product.productId}`}
+                    className="btn btn-primary btn-sm"
+                  >
+                    View
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <div>No low stock notifications at this time.</div>
       )}
