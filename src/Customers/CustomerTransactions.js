@@ -33,6 +33,8 @@ const TransactionList = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  console.log(error)
+
   if (transactions.length === 0) return <NotFound item="Transactions"/>;
 
 

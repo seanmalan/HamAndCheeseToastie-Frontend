@@ -23,9 +23,9 @@ const Login = () => {
       if (response.ok) {
         // Ensure login is called with the correct data
         login({
-          token: data.Token,
-          username: data.Username,
-          email: data.Email,
+          token: data.token,
+          username: data.username,
+          email: data.email,
         });
         console.log("Login successful:", data);
         navigate("/dashboard");

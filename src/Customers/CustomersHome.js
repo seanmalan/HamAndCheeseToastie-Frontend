@@ -1,40 +1,60 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import NotFound from "../Components/NotFound";
+import NotAuthenticated from "../Auth/NotAuthenticated";
 
 function CustomersHome() {
-  const [Customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const apiUrl = process.env.REACT_APP_API_URL;
+  const url = `${apiUrl}/api/customer`;
 
-  
   useEffect(() => {
-    // Fetch data from the C# API using the fetch API
-    fetch(`${apiUrl}/api/customer`) // Make sure to use the correct port for your C# backend
-      .then((response) => {
-        console.log(response);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json(); // Convert response to JSON
-      })
-      .then((data) => {
-        setCustomers(data); // Update Customers state with the data
-        setLoading(false); // Stop loading once data is fetched
-      })
-      .catch((error) => {
-        setError(error); // If an error occurs, catch it and update the error state
-        setLoading(false); // Stop loading even if there was an error
+    const fetchWithAuth = (url, options = {}) => {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${token}`, // Set Authorization header with token
+        },
       });
-  }, []);
+    };
 
-  // Handle loading, error, and data display states
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetchWithAuth(url);
+
+        // Check for Unauthorized (401) status
+        if (response.status === 401) {
+          setError({ message: "Not authenticated. Please log in." });
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setCustomers(data); // Set customer data
+      } catch (error) {
+        setError(error); // Capture any fetch or parsing errors
+      } finally {
+        setLoading(false); // Stop loading in all cases
+      }
+    };
+
+    fetchCustomers();
+  }, [url]);
+
+  // Handle loading, error, and no-data display states
   if (loading) return <div className="text-center">Loading...</div>;
   if (error) return <div className="text-center">Error: {error.message}</div>;
-  if (Customers.length === 0) return <NotFound item="Customers"/>;
+  if (customers.length === 0) return <NotFound item="Customers" />;
 
   return (
     <div
@@ -43,19 +63,20 @@ function CustomersHome() {
     >
       <div className="row text-center">
         <h1 className="mb-5">List of Customers</h1>
-        {Customers.map((Customer) => (
+        {customers.map((customer) => (
           <div
             className="col-12 col-md-6 col-lg-4 mb-4"
-            key={Customer.customerid}
+            key={customer.customerId}
           >
             <div className="card h-100">
               <div className="card-body">
-                <h5 className="card-title">{Customer.firstName} {Customer.lastName}</h5>
-                <p className="card-text">{Customer.email}</p>
-              
+                <h5 className="card-title">
+                  {customer.firstName} {customer.lastName}
+                </h5>
+                <p className="card-text">{customer.email}</p>
 
                 <Link
-                  to={`/Customers/${Customer.customerId}`}
+                  to={`/Customers/${customer.customerId}`}
                   className="btn btn-primary"
                 >
                   View Customer
