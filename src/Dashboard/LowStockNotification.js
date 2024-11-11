@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function LowStockNotification() {
-  const [lowStockProducts, setLowStockProducts] = useState([]); // State to hold low stock products
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const apiUrl = process.env.REACT_APP_API_URL; // Get API URL from .env
+  const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (!apiUrl) {
@@ -14,7 +14,7 @@ function LowStockNotification() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/available_products_levels`) // Fetch product stock levels from the API
+    fetch(`${apiUrl}/api/Dashboard/available_products_levels`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch product stock levels.");
@@ -22,11 +22,8 @@ function LowStockNotification() {
         return response.json();
       })
       .then((data) => {
-        // Assuming data is an array of products with properties: id, name, currentStockLevel, and minimumStockLevel
-        console.log(data);
-
-        setLowStockProducts(data); // Set low stock products
-        setLoading(false); // Stop loading
+        setLowStockProducts(data);
+        setLoading(false);
       })
       .catch((err) => {
         setError(err.message);
@@ -35,11 +32,11 @@ function LowStockNotification() {
   }, [apiUrl]);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>; // Loading state
+    return <div className="text-center">Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-center text-danger">{error}</div>; // Error state
+    return <div className="text-center text-danger">{error}</div>;
   }
 
   return (
