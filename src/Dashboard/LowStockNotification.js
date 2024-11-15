@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function LowStockNotification() {
-  const [lowStockProducts, setLowStockProducts] = useState([]); // State to hold low stock products
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const apiUrl = process.env.REACT_APP_API_URL; // Get API URL from .env
+  const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (!apiUrl) {
@@ -14,19 +14,19 @@ function LowStockNotification() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/available_products_levels`) // Fetch product stock levels from the API
+    fetch(`${apiUrl}/api/Dashboard/available_products_levels`)
       .then((response) => {
+        if (response.status === 404) {
+          throw new Error("No low stock products found.");
+        }
         if (!response.ok) {
           throw new Error("Failed to fetch product stock levels.");
         }
         return response.json();
       })
       .then((data) => {
-        // Assuming data is an array of products with properties: id, name, currentStockLevel, and minimumStockLevel
-        console.log(data)
-        
-        setLowStockProducts(data); // Set low stock products
-        setLoading(false); // Stop loading
+        setLowStockProducts(data);
+        setLoading(false);
       })
       .catch((err) => {
         setError(err.message);
@@ -35,42 +35,45 @@ function LowStockNotification() {
   }, [apiUrl]);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>; // Loading state
+    return <div className="text-center">Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-center text-danger">{error}</div>; // Error state
+    return <div className="text-center text-danger">{error}</div>;
   }
 
   return (
     <div>
       {lowStockProducts.length > 0 ? (
         <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Current Stock</th>
-            <th>Minimum Stock</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {lowStockProducts.map((product) => (
-            <tr key={product.productName}>
-              <td>{product.productId}</td>
-              <td>{product.productName}</td>
-              <td>{product.currentStockLevel}</td>
-              <td>{product.minimumStockLevel}</td>
-              <td>
-                <Link to={`/products/${product.productId}`} className="btn btn-primary btn-sm">
-                  View
-                </Link>
-              </td>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Current Stock</th>
+              <th>Minimum Stock</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {lowStockProducts.map((product) => (
+              <tr key={product.productId}>
+                <td>{product.productId}</td>
+                <td>{product.productName}</td>
+                <td>{product.currentStockLevel}</td>
+                <td>{product.minimumStockLevel}</td>
+                <td>
+                  <Link
+                    to={`/products/${product.productId}`}
+                    className="btn btn-primary btn-sm"
+                  >
+                    View
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <div>No low stock notifications at this time.</div>
       )}

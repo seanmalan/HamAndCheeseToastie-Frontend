@@ -1,13 +1,52 @@
+/* Global Styles for the Page */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  background: #0e6cca; /* Light grey background for the whole page */
+  color: #333; /* Dark grey text for general readability */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: flex-start; /* Keep content aligned at the top */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/* Add this if you want the page to have a soft blue tone throughout */
+h1, h2, h3, h4, h5, h6 {
+  color: #4a90e2; /* Blue text for headers */
+}
+
+/* Links Styling */
+a {
+  color: #4a90e2; /* Blue links */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Optional: If you have a top nav or header section, style it here */
+.header {
+  width: 100%;
+  padding: 20px 0;
+  background-color: #4a90e2; /* Blue background for header */
+  color: white;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+/* Optional: You can also customize buttons globally if needed */
+button {
+  background-color: #4a90e2; /* Blue buttons */
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+button:hover {
+  background-color: #357ab7; /* Darker blue on hover */
 }

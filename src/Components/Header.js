@@ -1,6 +1,11 @@
+// src/Header.js
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 const Header = () => {
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
+
   return (
     <div className="HeaderContainer">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -8,7 +13,6 @@ const Header = () => {
           <Link className="navbar-brand" to="/">
             Navbar
           </Link>
-
           <button
             className="navbar-toggler"
             type="button"
@@ -71,23 +75,20 @@ const Header = () => {
                   </li>
                 </ul>
               </li>
-              <li className="nav-item">
-                <span className="nav-link disabled" tabIndex="-1" aria-disabled="true">
-                  Disabled
-                </span>
-              </li>
             </ul>
-            <form className="d-flex">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
+
+            <div className="user">
+              {isAuthenticated ? (
+                <>
+                  <span>Welcome, {user?.username || "User"}</span>
+                  <button onClick={logout} className="btn btn-link">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link to="/login">Login</Link>
+              )}
+            </div>
           </div>
         </div>
       </nav>

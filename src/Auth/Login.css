@@ -1,0 +1,89 @@
+/* Reset some default styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Make sure any top content like nav or header is not affected */
+.header {
+    width: 100%;
+    padding: 20px 0;
+    background-color: #4a90e2;
+    color: white;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1; /* Let the login form grow to occupy available space */
+    margin-top: 30px; /* Add some space between header and form */
+}
+
+.login-form {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Max width to avoid form stretching */
+}
+
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #4a90e2; /* Blue color for the title */
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Rounded input fields */
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4a90e2; /* Blue border when focused */
+}
+
+button.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.submit-btn:hover {
+    background-color: #357ab7; /* Darker blue when hovered */
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.register-link a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
