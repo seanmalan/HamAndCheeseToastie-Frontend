@@ -26,7 +26,7 @@ const Register = () => {
       const data = await response.json();
       if (response.ok) {
         login(data); // Pass the token and user info to AuthContext
-        navigate("/"); // Redirect to the dashboard or any other page
+        navigate("/login"); // Redirect to the dashboard or any other page
       } else {
         console.error("Login failed:", data.message);
       }
