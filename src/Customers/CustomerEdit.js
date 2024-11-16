@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import NotFound from "../Components/NotFound";
+import { useParams, useNavigate } from "react-router-dom";
 
 const CustomerEdit = () => {
   const { id } = useParams(); // Get the customer ID from the URL
   const navigate = useNavigate(); // For navigation after update
 
   const apiUrl = process.env.REACT_APP_API_URL;
-
+  const url = `${apiUrl}/api/customer/${id}`;
 
   const [customer, setCustomer] = useState({
     firstName: "",
@@ -19,26 +18,34 @@ const CustomerEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch customer data when the component loads
   useEffect(() => {
-    fetch(`${apiUrl}/api/customer/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch customer details.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCustomer(data); // Set the customer data
-        setLoading(false); // Stop loading
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [id]);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No authentication token found. Please log in.");
+      setLoading(false);
+      return;
+    }
 
-  // Handle form input changes
+    fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+        .then((response) => {
+          if (!response.ok) throw new Error("Failed to fetch customer details.");
+          return response.json();
+        })
+        .then((data) => {
+          setCustomer(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
+  }, [url]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setCustomer({
@@ -47,147 +54,133 @@ const CustomerEdit = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Send the updated customer data to the API (PUT request)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No authentication token found. Please log in.");
+      return;
+    }
+
     fetch(`${apiUrl}/api/customer/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(customer),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update customer.");
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert("Customer updated successfully!");
-        navigate("/"); // Redirect back to the customers list
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
+        .then((response) => {
+          if (!response.ok) throw new Error("Failed to update customer.");
+          return response.json();
+        })
+        .then(() => {
+          alert("Customer updated successfully!");
+          navigate("/customers");
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!customer) return <NotFound item="Customer" />;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container mt-5">
-    <Link to={`/Customers`} className="btn btn-secondary mb-3">
-        Back to Customers
-      </Link>
-
-      <h1>
-        Edit Customer: {customer.firstName} {customer.lastName}
-      </h1>
-      <form onSubmit={handleSubmit}>
-        <div className="row mt-5">
-          <div className="col-md-6">
+      <div className="page">
+      <div className="form-container">
+        <h1>Edit Customer</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
             <label htmlFor="firstName" className="form-label">
-              First Name:
+              First Name
             </label>
-          </div>
-          <div className="mb-3 col-md-6">
             <input
-              type="text"
-              className="form-control"
-              id="firstName"
-              name="firstName"
-              value={customer.firstName}
-              onChange={handleChange}
-              required
+                type="text"
+                id="firstName"
+                name="firstName"
+                className="form-control"
+                value={customer.firstName}
+                onChange={handleChange}
+                required
             />
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-6">
+          <div className="mb-3">
             <label htmlFor="lastName" className="form-label">
-              Last Name:
+              Last Name
             </label>
-          </div>
-          <div className="mb-3 col-md-6">
             <input
-              type="text"
-              className="form-control"
-              id="lastName"
-              name="lastName"
-              value={customer.lastName}
-              onChange={handleChange}
-              required
+                type="text"
+                id="lastName"
+                name="lastName"
+                className="form-control"
+                value={customer.lastName}
+                onChange={handleChange}
+                required
             />
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-6">
+          <div className="mb-3">
             <label htmlFor="email" className="form-label">
-              Email:
+              Email
             </label>
-          </div>
-          <div className="mb-3 col-md-6">
             <input
-              type="email"
-              className="form-control"
-              id="email"
-              name="email"
-              value={customer.email}
-              onChange={handleChange}
-              required
+                type="email"
+                id="email"
+                name="email"
+                className="form-control"
+                value={customer.email}
+                onChange={handleChange}
+                required
             />
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-6">
+          <div className="mb-3">
             <label htmlFor="phoneNumber" className="form-label">
-              Phone Number:
+              Phone Number
             </label>
-          </div>
-          <div className="mb-3 col-md-6">
             <input
-              type="tel"
-              className="form-control"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={customer.phoneNumber}
-              onChange={handleChange}
-              required
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                className="form-control"
+                value={customer.phoneNumber}
+                onChange={handleChange}
+                required
             />
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-6">
-            <label htmlFor="isLoyaltyMember" className="form-label">
-              Loyalty Member:
+          <div className="mb-3 form-check loyaltyMember">
+            <input
+                type="checkbox"
+                id="isLoyaltyMember"
+                name="isLoyaltyMember"
+                className="form-check-input"
+                checked={customer.isLoyaltyMember}
+                onChange={handleChange}
+            />
+            <label htmlFor="isLoyaltyMember" className="form-check-label">
+              Loyalty Member
             </label>
           </div>
-          <div className="mb-3 col-md-6">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="isLoyaltyMember"
-              name="isLoyaltyMember"
-              checked={customer.isLoyaltyMember}
-              onChange={handleChange}
-            />
+
+
+          <div className="button-container">
+            <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => navigate("/customers")}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              Save Changes
+            </button>
           </div>
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Save Changes
-        </button>
-
-      </form>
-        <Link to={`/Customers/${id}/transactions`} className="btn btn-secondary">View Customers Transactions</Link>
-    </div>
+        </form>
+      </div>
+      </div>
   );
 };
 

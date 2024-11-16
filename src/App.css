@@ -7,6 +7,70 @@
   pointer-events: none;
 }
 
+.page {
+  background-color: #d0e7f9;
+  padding: 2rem;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  background-color:#f2f2f2;
+  text-align: center;
+
+}
+
+.form-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-container .form-label {
+  font-weight: bold;
+}
+
+.form-container .button-container {
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem;
+}
+
+.form-container .loyaltyMember {
+  display: flex;
+  justify-content: start;
+  margin: 1rem;
+}
+
+.form-container .loyaltyMember .form-check-input {
+  margin-right: 1rem;
+}
+
+/*.form-container .btn-secondary {*/
+/*  background-color: #6c757d;*/
+/*  border-color: #6c757d;*/
+/*}*/
+
+ul {
+  list-style-type: none;
+}
+
+
+footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 1rem 0;
+}
+
+.sidebar {
+  height: 100%;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

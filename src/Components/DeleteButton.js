@@ -1,6 +1,6 @@
 import React from "react";
 
-const DeleteButton = ({ endpoint, id, onDeleteSuccess }) => {
+const DeleteButton = ({ endpoint, id, onDeleteSuccess, component }) => {
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this item?");
 
@@ -33,7 +33,7 @@ const DeleteButton = ({ endpoint, id, onDeleteSuccess }) => {
 
   return (
     <button className="btn btn-danger" onClick={handleDelete}>
-      Delete
+      Delete {component}
     </button>
   );
 };

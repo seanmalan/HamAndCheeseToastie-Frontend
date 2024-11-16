@@ -33,7 +33,7 @@ const TransactionList = () => {
 
   if (transactions.length === 0) return <NotFound item="Transactions"/>;
 
-
+console.log(transactions)
   return (
     <div className="container mt-4">
       <h1 className="mb-5 text-center text-primary">Transaction List</h1>

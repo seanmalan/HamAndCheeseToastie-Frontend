@@ -39,35 +39,41 @@ function CategoriesEdit() {
 
   
   return (
-    <div>
-    <Link to={`/categories`} className="btn btn-secondary">
-        Back to Categories
-      </Link>
+      <div className="page">
+        <div className="form-container">
+          <Link to={`/categories`} className="btn btn-secondary">
+            Back to Categories
+          </Link>
 
-      {products.categoryName}
-      <h1>Products in Category {id}</h1>
-      {products.length > 0 ? (
-        <ul>
-          {products.map((product) => (
-            <li key={product.id}>
-              <h2>{product.name}</h2>
-              <p>Brand: {product.BrandName}</p>
-              <p>Price: ${product.price}</p>
-              <p>Stock Level: {product.currentStockLevel}</p>
-              <Link
-                to={`/Products/${product.id}`}
-                className="btn btn-primary btn-sm"
-              >
-                View
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No products found for this category.</p>
-      )}
-    </div>
-  );
-}
+          {products.categoryName}
+          <h1>Products in Category {id}</h1>
+          {products.length > 0 ? (
+              <ul>
+                {products.map((product) => (
+                    <li key={product.id}>
+                      <h2>{product.name}</h2>
+                      <p>Brand: {product.brandName}</p>
+                      <p>Price: ${product.price}</p>
+                      <p>Stock Level: {product.currentStockLevel}</p>
 
-export default CategoriesEdit;
+
+                      <button className="btn btn-primary btn-sm">
+                      <Link
+                          to={`/Products/${product.id}`}
+                          className="btn btn-primary btn-sm"
+                      >
+                        View
+                      </Link>
+                        </button>
+                    </li>
+                ))}
+              </ul>
+          ) : (
+              <p>No products found for this category.</p>
+          )}
+        </div>
+      </div>
+        );
+        }
+
+        export default CategoriesEdit;

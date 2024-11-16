@@ -7,7 +7,7 @@ body {
   color: #333; /* Dark grey text for general readability */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
+  height: 100%;
   padding: 20px;
   display: flex;
   flex-direction: column; /* Stack elements vertically */
@@ -50,3 +50,4 @@ button {
 button:hover {
   background-color: #357ab7; /* Darker blue on hover */
 }
+
