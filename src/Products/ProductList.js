@@ -20,47 +20,47 @@ const ProductList = () => {
 
   useEffect(() => {
     fetch(`${apiUrl}/api/product`)
-      .then((response) => {
-        if (!response.ok)
-          throw new Error(
-            "Network response was not ok for the product retrieval"
-          );
-        return response.json();
-      })
-      .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(
+                "Network response was not ok for the product retrieval"
+            );
+          return response.json();
+        })
+        .then((data) => {
+          setProducts(data);
+          setFilteredProducts(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error);
+          setLoading(false);
+        });
   }, [apiUrl]);
 
   useEffect(() => {
     fetch(`${apiUrl}/api/Category`)
-      .then((response) => {
-        if (!response.ok)
-          throw new Error(
-            "Network response was not ok for the categories retrieval"
-          );
-        return response.json();
-      })
-      .then((categoryData) => {
-        setCategories(categoryData);
-        setLoadingCategories(false);
-      })
-      .catch((error) => {
-        setCategoriesError(error);
-        setLoadingCategories(false);
-      });
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(
+                "Network response was not ok for the categories retrieval"
+            );
+          return response.json();
+        })
+        .then((categoryData) => {
+          setCategories(categoryData);
+          setLoadingCategories(false);
+        })
+        .catch((error) => {
+          setCategoriesError(error);
+          setLoadingCategories(false);
+        });
   }, [apiUrl]);
 
   // Handle pagination
   const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
   );
 
   const handlePageChange = (pageNumber) => {
@@ -73,13 +73,13 @@ const ProductList = () => {
 
     if (selectedCategory) {
       filtered = filtered.filter(
-        (product) => product.categoryName === selectedCategory
+          (product) => product.categoryName === selectedCategory
       );
     }
 
     if (searchQuery) {
       filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+          product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -95,91 +95,91 @@ const ProductList = () => {
   if (products.length === 0) return <NotFound item="Products" />;
 
   return (
-    <div className="container">
-      <Link to={`/`} className="btn btn-secondary mb-3">
-        Back to Dashboard
-      </Link>
-      <h1 className="mb-5 text-center">List of Products</h1>
+      <div className="container mt-5">
+        <Link to={`/`} className="btn btn-secondary mb-3">
+          Back to Dashboard
+        </Link>
+        <h1 className="mb-5 text-center text-primary">Products On Record</h1>
 
-      {/* Filter Controls */}
-      <div className="row mb-4">
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="col-md-4">
-          <select
-            className="form-control"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-            ;
-          </select>
-        </div>
-      </div>
-
-      {/* Product Cards */}
-      <div className="row">
-        {paginatedProducts.map((product) => (
-          <div className="col-12 col-md-6 col-lg-4 mb-4" key={product.id}>
-            <div className="card h-100">
-              <div className="card-body">
-                {product.imagePath && (
-                  <img
-                    src={`${apiUrl}/${product.imagePath}`}
-                    alt={product.name}
-                    width="200"
-                  />
-                )}
-                <h5 className="card-title">{product.name}</h5>
-                <p className="card-text">${product.price.toFixed(2)}</p>
-                <Link
-                  to={`/products/${product.id}`}
-                  className="btn btn-primary"
-                >
-                  View Product
-                </Link>
-              </div>
-            </div>
+        {/* Filter Controls */}
+        <div className="row mb-4">
+          <div className="col-md-6 col-lg-4">
+            <select
+                className="form-control form-control-lg"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+              ))}
+            </select>
           </div>
-        ))}
-      </div>
+          <div className="col-md-6 col-lg-6">
+            <input
+                type="text"
+                className="form-control form-control-lg"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
 
-      {/* Pagination */}
-      <nav>
-        <ul className="pagination justify-content-center">
-          {Array.from(
-            { length: Math.ceil(filteredProducts.length / itemsPerPage) },
-            (_, index) => (
-              <li
-                className={`page-item ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-                key={index}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    </div>
+        {/* Product Cards */}
+        <div className="row g-4">
+          {paginatedProducts.map((product) => (
+              <div className="col-12 col-md-6 col-lg-4" key={product.id}>
+                <div className="card shadow-sm border-light h-100">
+                  {product.imagePath && (
+                      <img
+                          src={`${apiUrl}/${product.imagePath}`}
+                          alt={product.name}
+                          className="card-img-top"
+                          style={{ height: "200px", objectFit: "cover" }}
+                      />
+                  )}
+                  <div className="card-body">
+                    <h5 className="card-title">{product.name}</h5>
+                    <p className="card-text text-muted">${product.price.toFixed(2)}</p>
+                    <Link
+                        to={`/products/${product.id}`}
+                        className="btn btn-primary w-100"
+                    >
+                      View Product
+                    </Link>
+                  </div>
+                </div>
+              </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <nav className="mt-4">
+          <ul className="pagination justify-content-center">
+            {Array.from(
+                { length: Math.ceil(filteredProducts.length / itemsPerPage) },
+                (_, index) => (
+                    <li
+                        className={`page-item ${
+                            currentPage === index + 1 ? "active" : ""
+                        }`}
+                        key={index}
+                    >
+                      <button
+                          className="page-link"
+                          onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </button>
+                    </li>
+                )
+            )}
+          </ul>
+        </nav>
+      </div>
   );
 };
 

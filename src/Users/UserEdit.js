@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NotFound from "../Components/NotFound";
+import { AuthContext } from "../Context/AuthContext";
 
 const UserEdit = () => {
-  const { id } = useParams(); // Get the user ID from the URL
-  const navigate = useNavigate(); // For navigation after update
+  const { id } = useParams();
+  const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
+  const { isAuthenticated, user } = useContext(AuthContext);
 
-  const [user, setUser] = useState({
+  const [editUser, setEditUser] = useState({
     username: "",
     password: "",
     email: "",
@@ -18,33 +20,31 @@ const UserEdit = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
 
-  // Fetch user data when the component loads
   useEffect(() => {
     fetch(`${apiUrl}/api/user/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch user details.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setUser(data); // Populate the form with user data
-        setLoading(false); // Stop loading
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch user details.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setEditUser(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        });
   }, [id]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
+    setEditUser({ ...editUser, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -53,152 +53,206 @@ const UserEdit = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(editUser),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update user.");
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert("User updated successfully!");
-        navigate("/users"); // Redirect to users list or another page
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to update user.");
+          }
+          return response.json();
+        })
+        .then(() => {
+          alert("User updated successfully!");
+          navigate("/users");
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
+  };
+
+  const handleForgotPassword = () => {
+    fetch(`${apiUrl}/api/Auth/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: forgotPasswordEmail }),
+    })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to send password reset link.");
+          }
+          return response.json();
+        })
+        .then(() => {
+          alert("Password reset link sent!");
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!user) return <NotFound item="User" />;
+  if (!editUser) return <NotFound item="User" />;
 
   return (
-    <div className="container mt-5">
-      <Link to={`/users`} className="btn btn-secondary">
-        Back to Users
-      </Link>
-
-      <h1>Edit User: {user.username}</h1>
-      {error && <div className="alert alert-danger">Error: {error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">
-            Username:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            name="username"
-            value={user.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            name="password"
-            value={user.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email:
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="emailConfirmed" className="form-label">
-            Email Confirmed:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="emailConfirmed"
-            name="emailConfirmed"
-            value={user.emailConfirmed}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="passwordHash" className="form-label">
-            Password Hash:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="passwordHash"
-            name="passwordHash"
-            value={user.passwordHash}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="role" className="form-label">
-            Role:
-          </label>
-          <input
-            type="number"
-            className="form-control"
-            id="role"
-            name="role"
-            value={user.role}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3 d-flex justify-content-between align-items-center">
-          <button type="submit" className="btn btn-primary">
-            Save Changes
-          </button>
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={() => {
-              fetch(`${apiUrl}/api/user/${id}`, {
-                method: "DELETE",
-              })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Failed to delete user.");
-                  }
-                  return response.json();
-                })
-                .then(() => {
-                  alert("User deleted successfully!");
-                  navigate("/users"); // Redirect to users list or another page
-                })
-                .catch((err) => {
-                  setError(err.message);
-                });
+      <div
+          className="d-flex justify-content-center align-items-center vh-100"
+          style={{ backgroundColor: "#d0e7f9" }}
+      >
+        <div
+            className="p-5 rounded shadow"
+            style={{
+              backgroundColor: "#f2f2f2",
+              maxWidth: "600px",
+              width: "100%",
             }}
-          >
-            Delete User
-          </button>
+        >
+          <Link to={`/users`} className="btn btn-secondary mb-3">
+            Back to Users
+          </Link>
+
+          <h1 className="text-center">Edit User: {editUser.username}</h1>
+          {error && <div className="alert alert-danger">Error: {error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">
+                Username:
+              </label>
+              <input
+                  type="text"
+                  className="form-control"
+                  id="username"
+                  name="username"
+                  value={editUser.username}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+            {user.id === editUser.id ? (
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">
+                    Password:
+                  </label>
+                  <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      name="password"
+                      value={editUser.password}
+                      onChange={handleChange}
+                      required
+                  />
+                </div>
+            ) : null}
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
+                Email:
+              </label>
+              <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  value={editUser.email}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+            
+            { user.role === 1 ? (
+            <div className="mb-3">
+              <label htmlFor="role" className="form-label">
+                Role:
+              </label>
+              <input
+                  type="number"
+                  className="form-control"
+                  id="role"
+                  name="role"
+                  value={editUser.role}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+            ) : ( null )}
+
+            <div className="mb-3 d-flex justify-content-between align-items-center">
+              <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => {
+                    fetch(`${apiUrl}/api/user/${id}`, {
+                      method: "DELETE",
+                    })
+                        .then((response) => {
+                          if (!response.ok) {
+                            throw new Error("Failed to delete user.");
+                          }
+                          return response.json();
+                        })
+                        .then(() => {
+                          alert("User deleted successfully!");
+                          navigate("/users");
+                        })
+                        .catch((err) => {
+                          setError(err.message);
+                        });
+                  }}
+              >
+                Delete User
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Save Changes
+              </button>
+            </div>
+          </form>
+
+          <div className="accordion mt-4" id="forgotPasswordAccordion">
+          <div className="accordion-item">
+              <h2 className="accordion-header" id="forgotPasswordHeading">
+                <button
+                    className="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#forgotPasswordCollapse"
+                    aria-expanded="true"
+                    aria-controls="forgotPasswordCollapse"
+                >
+                  Forgot Password?
+                </button>
+              </h2>
+              <div
+                  id="forgotPasswordCollapse"
+                  className="accordion-collapse collapse"
+                  aria-labelledby="forgotPasswordHeading"
+                  data-bs-parent="#forgotPasswordAccordion"
+              >
+                <div className="accordion-body">
+                  <label htmlFor="forgotPasswordEmail" className="form-label">
+                    Enter your email address:
+                  </label>
+                  <input
+                      type="email"
+                      id="forgotPasswordEmail"
+                      className="form-control mb-2"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      required
+                  />
+                  <button
+                      className="btn btn-warning"
+                      onClick={handleForgotPassword}
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
   );
 };
 

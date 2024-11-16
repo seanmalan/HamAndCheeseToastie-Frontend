@@ -15,7 +15,6 @@ function CustomersHome() {
   useEffect(() => {
     const fetchWithAuth = (url, options = {}) => {
       const token = localStorage.getItem("token");
-      console.log(token);
       if (!token) {
         setError({ message: "No authentication token found" });
         return;
@@ -39,10 +38,9 @@ function CustomersHome() {
         const response = await fetchWithAuth(url);
         // Check for Unauthorized (401) status
         if (response.status === 401) {
-          setError({ message: "Not authenticated. Please log in." });
-          return;
+          setError({ message: "Not Authorised. Please log in again.", response });
+            return;
         }
-
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -61,7 +59,7 @@ function CustomersHome() {
 
   // Handle loading, error, and no-data display states
   if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center">Error: {error.message}</div>;
+  if (error) return <div className="text-center">Error: {error.message} </div>;
   if (customers.length === 0) return <NotFound item="Customers" />;
 
   return (
