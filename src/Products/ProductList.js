@@ -19,7 +19,7 @@ const ProductList = () => {
   const itemsPerPage = 30;
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/product`)
+    fetch(`${apiUrl}/api/Product`)
       .then((response) => {
         if (!response.ok)
           throw new Error(
@@ -33,6 +33,7 @@ const ProductList = () => {
         setLoading(false);
       })
       .catch((error) => {
+        console.error("Error fetching products:", error);
         setError(error);
         setLoading(false);
       });
