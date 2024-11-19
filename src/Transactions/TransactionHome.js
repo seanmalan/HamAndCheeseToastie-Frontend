@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import NotFound from "../Components/NotFound";
+import NZDateFormatter from "../Components/DateFormat";
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  
-  useEffect(() => {
-    fetch(`${apiUrl}/api/Transaction`) // Replace with your API URL
+  const fetchTransactions = () => {
+    setLoading(true);
+
+    // Build query parameters based on the selected dates
+    const queryParams = new URLSearchParams();
+    if (dateFrom) queryParams.append("dateFrom", dateFrom);
+    if (dateTo) queryParams.append("dateTo", dateTo);
+
+    fetch(`${apiUrl}/api/Transaction?${queryParams.toString()}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -26,17 +35,56 @@ const TransactionList = () => {
         setError(error);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchTransactions();
   }, []);
+
+  const handleFilter = () => {
+    fetchTransactions();
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
+  if (transactions.length === 0) return <NotFound item="Transactions" />;
 
-  if (transactions.length === 0) return <NotFound item="Transactions"/>;
-
-console.log(transactions)
   return (
     <div className="container mt-4">
       <h1 className="mb-5 text-center text-primary">Transaction List</h1>
+
+      {/* Date Range Filter */}
+      <div className="row mb-4">
+        <div className="col">
+          <label>
+            Start Date:{" "}
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="form-control d-inline-block w-auto"
+            />
+          </label>
+        </div>
+        <div className="col">
+          <label>
+            End Date:{" "}
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="form-control d-inline-block w-auto"
+            />
+          </label>
+        </div>
+        <div className="col">
+          <button className="btn btn-primary mt-3" onClick={handleFilter}>
+            Filter
+          </button>
+        </div>
+      </div>
+
+      {/* Transaction Table */}
       <table className="table table-striped">
         <thead>
           <tr>
@@ -55,15 +103,18 @@ console.log(transactions)
           {transactions.map((transaction) => (
             <tr key={transaction.transactionId}>
               <td>{transaction.transactionId}</td>
-              <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
-              <td>${transaction.totalAmount}</td>
-              <td>${transaction.discount}</td>
+              <td><NZDateFormatter date={transaction.transactionDate} length={"short"}/></td>
+              <td>${transaction.totalAmount.toFixed(2)}</td>
+              <td>${transaction.discount.toFixed(2)}</td>
               <td>{transaction.paymentMethod}</td>
-              <td>${transaction.taxAmount}</td>
+              <td>${transaction.taxAmount.toFixed(2)}</td>
               <td>{transaction.cashierId}</td>
               <td>{transaction.customerId}</td>
               <td>
-                <Link to={`/transactions/${transaction.transactionId}`} className="btn btn-primary btn-sm">
+                <Link
+                  to={`/transactions/${transaction.transactionId}`}
+                  className="btn btn-primary btn-sm"
+                >
                   View
                 </Link>
               </td>

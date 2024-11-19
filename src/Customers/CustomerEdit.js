@@ -6,7 +6,7 @@ const CustomerEdit = () => {
   const navigate = useNavigate(); // For navigation after update
 
   const apiUrl = process.env.REACT_APP_API_URL;
-  const url = `${apiUrl}/api/customer/${id}`;
+  const url = `${apiUrl}/api/Customer/${id}`;
 
   const [customer, setCustomer] = useState({
     firstName: "",
@@ -62,7 +62,7 @@ const CustomerEdit = () => {
       return;
     }
 
-    fetch(`${apiUrl}/api/customer/${id}`, {
+    fetch(`${apiUrl}/api/Customer/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

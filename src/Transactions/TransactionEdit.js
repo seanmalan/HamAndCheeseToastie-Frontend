@@ -77,7 +77,7 @@ function TransactionEdit() {
                     Transaction Date:
                   </label>
                   <div className="mb-2">
-                    <NZDateFormatter date={transaction.transactionDate}/>
+                    <NZDateFormatter date={transaction.transactionDate} length={"long"}/>
                   </div>
                 </div>
 

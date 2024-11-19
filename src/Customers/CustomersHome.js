@@ -8,7 +8,6 @@ function CustomersHome() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const apiUrl = process.env.REACT_APP_API_URL;
   const url = `${apiUrl}/api/customer`;
 
