@@ -1,43 +1,50 @@
 import React from "react";
 
 const DeleteButton = ({ endpoint, id, onDeleteSuccess, component }) => {
-  const handleDelete = async () => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
     const confirmDelete = window.confirm(
       `Are you sure you want to delete this item: ${component}?`
     );
 
-    const apiUrl = process.env.REACT_APP_API_URL;
-
     if (!confirmDelete) return;
 
-    const token = localStorage.getItem("token"); // Get the token from storage
+    const apiUrl = process.env.REACT_APP_API_URL;
+    const token = localStorage.getItem("token");
+
     if (!token) {
       alert("No authentication token found. Please log in.");
       return;
     }
 
     try {
-      const response = await fetch(`${apiUrl}/${endpoint}/${id}`, {
+      const response = await fetch(`${apiUrl}/api/${endpoint}/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the Authorization header
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      if (response.ok) {
+      if (response.status === 204) {
+        // Success case: No Content
         alert(`${component} deleted successfully!`);
-
-        // Call the callback function if provided, to update UI after deletion
         if (onDeleteSuccess) {
-          onDeleteSuccess(id);
+          onDeleteSuccess(id); // Pass the ID to the callback if needed
         }
-      } else {
-        alert(`Failed to delete the ${component}.`);
+        return;
+      }
+
+      if (!response.ok) {
+        // Handle non-204 error responses
+        const errorMessage = await response.text(); // Read error body, if available
+        throw new Error(
+          errorMessage ||
+            `Failed to delete ${component} (Status: ${response.status})`
+        );
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      alert(error.message);
     }
   };
 
