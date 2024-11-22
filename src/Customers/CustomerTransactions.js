@@ -9,7 +9,7 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const url = `${apiUrl}/api/Customer/${id}/transactions`;
+  const url = `${apiUrl}/Customer/${id}/transactions`;
 
   useEffect(() => {
     const token = localStorage.getItem("token");

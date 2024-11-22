@@ -68,7 +68,7 @@ const CustomerEdit = () => {
       return;
     }
 
-    fetch(`${apiUrl}/api/Customer/${id}`, {
+    fetch(`${apiUrl}/Customer/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

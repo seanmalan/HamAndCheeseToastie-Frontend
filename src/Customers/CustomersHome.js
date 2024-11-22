@@ -9,7 +9,7 @@ function CustomersHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const url = `${apiUrl}/api/customer`;
+  const url = `${apiUrl}/customer`;
 
   useEffect(() => {
     const fetchWithAuth = (url, options = {}) => {
