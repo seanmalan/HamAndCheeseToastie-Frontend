@@ -14,7 +14,7 @@ function RecentTransactionsDashboard() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/recent_transactions`) // Fetch total transactions from the API
+    fetch(`${apiUrl}/Dashboard/recent_transactions`) // Fetch total transactions from the API
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch recent transactions.");

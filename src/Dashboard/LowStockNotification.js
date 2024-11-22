@@ -14,7 +14,7 @@ function LowStockNotification() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/available_products_levels`)
+    fetch(`${apiUrl}/Dashboard/available_products_levels`)
       .then((response) => {
         if (response.status === 404) {
           throw new Error("No low stock products found.");

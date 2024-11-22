@@ -31,7 +31,7 @@ function AnalyticsHome() {
   }, [selectedPeriod, selectedDataset]);
 
   const fetchChartData = (dataset, period) => {
-    fetch(`${apiUrl}/api/Analytics/data?dataset=${dataset}&period=${period}`)
+    fetch(`${apiUrl}/Analytics/data?dataset=${dataset}&period=${period}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);

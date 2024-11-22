@@ -19,7 +19,7 @@ const ProductList = () => {
   const itemsPerPage = 30;
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/product`)
+    fetch(`${apiUrl}/product`)
         .then((response) => {
           if (!response.ok)
             throw new Error(
@@ -39,7 +39,7 @@ const ProductList = () => {
   }, [apiUrl]);
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/Category`)
+    fetch(`${apiUrl}/Category`)
         .then((response) => {
           if (!response.ok)
             throw new Error(

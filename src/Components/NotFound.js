@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function NotFound({ item }) {
   // Generate a random number between 1 and 5
@@ -8,11 +8,16 @@ function NotFound({ item }) {
   const imageUrl = `${apiUrl}/images/404/404-${randomImageNumber}.jpeg`;
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center vh-100 text-center">
+    <div className="d-flex flex-column align-items-center justify-content-center text-center">
       <h1>{item} Not Found</h1>
 
       <p>Sorry, we have searched everywhere and we couldn't find any {item}.</p>
-      <img src={imageUrl} className="img-fluid" style={{ maxWidth: '600px' }} alt="404 Not Found" />
+      <img
+        src={imageUrl}
+        className="img-fluid"
+        style={{ maxWidth: "600px" }}
+        alt="404 Not Found"
+      />
     </div>
   );
 }

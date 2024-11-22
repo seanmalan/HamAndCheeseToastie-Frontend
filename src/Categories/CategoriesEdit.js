@@ -13,7 +13,7 @@ function CategoriesEdit() {
 
   // Fetch products linked to this id
   useEffect(() => {
-    fetch(`${apiUrl}/api/category/${id}`)
+    fetch(`${apiUrl}/category/${id}`)
       .then((response) => {
         if (!response.ok) {
           console.log(response);

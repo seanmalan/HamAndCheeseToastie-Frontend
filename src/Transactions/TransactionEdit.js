@@ -22,7 +22,7 @@ function TransactionEdit() {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/Transaction/${id}`) // Replace with your API URL
+    fetch(`${apiUrl}/Transaction/${id}`) // Replace with your API URL
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");

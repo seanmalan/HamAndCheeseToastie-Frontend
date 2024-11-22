@@ -13,7 +13,7 @@ function TotalTransactionsDashboard() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/total_transactions`) // Fetch total transactions from the API
+    fetch(`${apiUrl}/Dashboard/total_transactions`) // Fetch total transactions from the API
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch total transactions.");

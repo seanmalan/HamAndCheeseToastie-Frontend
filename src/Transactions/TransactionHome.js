@@ -20,7 +20,7 @@ const TransactionList = () => {
     if (dateFrom) queryParams.append("dateFrom", dateFrom);
     if (dateTo) queryParams.append("dateTo", dateTo);
 
-    fetch(`${apiUrl}/api/Transaction?${queryParams.toString()}`)
+    fetch(`${apiUrl}/Transaction?${queryParams.toString()}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

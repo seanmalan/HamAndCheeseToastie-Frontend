@@ -2,7 +2,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-  "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   background: #0e6cca; /* Light grey background for the whole page */
   color: #333; /* Dark grey text for general readability */
   -webkit-font-smoothing: antialiased;
@@ -15,7 +16,12 @@ body {
 }
 
 /* Add this if you want the page to have a soft blue tone throughout */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #4a90e2; /* Blue text for headers */
 }
 
@@ -51,3 +57,31 @@ button:hover {
   background-color: #357ab7; /* Darker blue on hover */
 }
 
+.dropdown {
+  margin-top: 20px;
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding: 10px;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}

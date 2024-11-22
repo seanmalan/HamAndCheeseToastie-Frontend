@@ -16,7 +16,7 @@ const CategoryList = () => {
 
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/Category`)
+    fetch(`${apiUrl}/Category`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -49,7 +49,7 @@ const CategoryList = () => {
   };
 
   const handleDelete = (id) => {
-    fetch(`${apiUrl}/api/Category/${id}`, {
+    fetch(`${apiUrl}/Category/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -67,7 +67,7 @@ const CategoryList = () => {
 
   const handleAddCategory = () => {
     const newCategory = { name: newCategoryName };
-    fetch(`${apiUrl}/api/Category`, {
+    fetch(`${apiUrl}/Category`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
