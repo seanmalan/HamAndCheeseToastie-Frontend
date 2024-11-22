@@ -30,7 +30,7 @@ const ProductsEdit = () => {
 
   // Fetch product data when the component loads
   useEffect(() => {
-    fetch(`${apiUrl}/api/product/${id}`)
+    fetch(`${apiUrl}/product/${id}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to fetch product details.");
@@ -61,7 +61,7 @@ const ProductsEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Send the updated product to the API (PUT request)
-    fetch(`${apiUrl}/api/product/${id}`, {
+    fetch(`${apiUrl}/product/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

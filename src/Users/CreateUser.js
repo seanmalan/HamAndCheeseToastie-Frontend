@@ -26,7 +26,7 @@ const UserCreate = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`${apiUrl}/api/user`, {
+    fetch(`${apiUrl}/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

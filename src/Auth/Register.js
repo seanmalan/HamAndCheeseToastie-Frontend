@@ -18,7 +18,7 @@ const Register = () => {
     e.preventDefault();
     console.log({ username, email, password, confirmPassword });
     try {
-      const response = await fetch(`${apiUrl}/api/Auth/register`, {
+      const response = await fetch(`${apiUrl}/Auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, email, confirmPassword }),

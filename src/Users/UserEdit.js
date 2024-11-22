@@ -23,7 +23,7 @@ const UserEdit = () => {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/user/${id}`)
+    fetch(`${apiUrl}/user/${id}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to fetch user details.");
@@ -48,7 +48,7 @@ const UserEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`${apiUrl}/api/user/${id}`, {
+    fetch(`${apiUrl}/user/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const UserEdit = () => {
   };
 
   const handleForgotPassword = () => {
-    fetch(`${apiUrl}/api/Auth/forgot-password`, {
+    fetch(`${apiUrl}/Auth/forgot-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -183,7 +183,7 @@ const UserEdit = () => {
                   type="button"
                   className="btn btn-danger"
                   onClick={() => {
-                    fetch(`${apiUrl}/api/user/${id}`, {
+                    fetch(`${apiUrl}/user/${id}`, {
                       method: "DELETE",
                     })
                         .then((response) => {

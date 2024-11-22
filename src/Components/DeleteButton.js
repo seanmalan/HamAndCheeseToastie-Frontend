@@ -2,28 +2,38 @@ import React from "react";
 
 const DeleteButton = ({ endpoint, id, onDeleteSuccess, component }) => {
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete this item: ${component}?`
+    );
 
-  const apiUrl = process.env.REACT_APP_API_URL;
-
-
+    const apiUrl = process.env.REACT_APP_API_URL;
 
     if (!confirmDelete) return;
+
+    const token = localStorage.getItem("token"); // Get the token from storage
+    if (!token) {
+      alert("No authentication token found. Please log in.");
+      return;
+    }
 
     try {
       const response = await fetch(`${apiUrl}/${endpoint}/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the Authorization header
+        },
       });
 
       if (response.ok) {
-        alert("Item deleted successfully!");
+        alert(`${component} deleted successfully!`);
 
         // Call the callback function if provided, to update UI after deletion
         if (onDeleteSuccess) {
           onDeleteSuccess(id);
         }
       } else {
-        alert("Failed to delete the item.");
+        alert(`Failed to delete the ${component}.`);
       }
     } catch (error) {
       console.error("Error:", error);

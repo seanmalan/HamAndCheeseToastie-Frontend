@@ -13,7 +13,7 @@ function TotalCustomersDashCard() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/total_customers`) // Fetch total sales from the API
+    fetch(`${apiUrl}/Dashboard/total_customers`) // Fetch total sales from the API
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch total sales.");

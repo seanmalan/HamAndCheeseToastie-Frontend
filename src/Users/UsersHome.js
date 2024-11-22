@@ -11,7 +11,7 @@ function UsersHome() {
 
   useEffect(() => {
     // Fetch data from the C# API using the fetch API
-    fetch(`${apiUrl}/api/user`) // Make sure to use the correct port for your C# backend
+    fetch(`${apiUrl}/user`) // Make sure to use the correct port for your C# backend
       .then((response) => {
         console.log(response);
         if (!response.ok) {

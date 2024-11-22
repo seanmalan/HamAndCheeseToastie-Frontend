@@ -15,7 +15,7 @@ function CustomerInsightsWidget() {
       return;
     }
 
-    fetch(`${apiUrl}/api/Dashboard/customer_insights`) // Fetch total transactions from the API
+    fetch(`${apiUrl}/Dashboard/customer_insights`) // Fetch total transactions from the API
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch customer insights.");
