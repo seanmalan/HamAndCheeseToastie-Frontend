@@ -21,6 +21,8 @@ const UserEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
 
   useEffect(() => {
     fetch(`${apiUrl}/user/${id}`)
@@ -203,6 +205,32 @@ const UserEdit = () => {
               >
                 Delete User
               </button>
+
+              <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-warning dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded={dropdownOpen}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                More Actions
+              </button>
+              <ul className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
+                <li>
+                  Something Else
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="dropdown-item btn btn-warning"
+                    onClick={() => navigate(`/Users/${id}/Transactions`)}
+                  >
+                    View Transactions
+                  </button>
+                </li>
+              </ul>
+            </div>
               <button type="submit" className="btn btn-primary">
                 Save Changes
               </button>
