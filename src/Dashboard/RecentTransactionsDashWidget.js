@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PaymentMethod from "../Transactions/Components/PaymentMethod";
 
 function RecentTransactionsDashboard() {
   const [recentTransactions, setRecentTransactions] = useState(0); // State to hold total sales
@@ -22,7 +23,7 @@ function RecentTransactionsDashboard() {
         return response.json();
       })
       .then((data) => {
-        console.log(data)
+        console.log(data);
         setRecentTransactions(data); // Populate the total sales
         setLoading(false); // Stop loading
       })
@@ -61,15 +62,22 @@ function RecentTransactionsDashboard() {
           {recentTransactions.map((transaction) => (
             <tr key={transaction.transactionId}>
               <td>{transaction.transactionId}</td>
-              <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
+              <td>
+                {new Date(transaction.transactionDate).toLocaleDateString()}
+              </td>
               <td>${transaction.totalAmount.toFixed(2)}</td>
               <td>${transaction.discount.toFixed(2)}</td>
-              <td>{transaction.paymentMethod}</td>
+              <td>
+                <PaymentMethod paymentMethod={transaction.paymentMethod} />
+              </td>
               <td>${transaction.taxAmount.toFixed(2)}</td>
-              <td>{transaction.cashierId}</td>
+              <td>{transaction.userId}</td>
               <td>{transaction.customerId}</td>
               <td>
-                <Link to={`/transactions/${transaction.transactionId}`} className="btn btn-primary btn-sm">
+                <Link
+                  to={`/transactions/${transaction.transactionId}`}
+                  className="btn btn-primary btn-sm"
+                >
                   View
                 </Link>
               </td>

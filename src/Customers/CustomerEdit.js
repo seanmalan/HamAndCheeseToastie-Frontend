@@ -7,7 +7,7 @@ const CustomerEdit = () => {
   const navigate = useNavigate(); // For navigation after update
 
   const apiUrl = process.env.REACT_APP_API_URL; // API URL from env file
-  const url = `${apiUrl}/api/Customer/${id}`;
+  const url = `${apiUrl}/Customer/${id}`;
 
   const [customer, setCustomer] = useState({
     firstName: "",
