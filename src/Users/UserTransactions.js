@@ -40,7 +40,7 @@ function UserTransactions() {
     };
 
     fetchUserTransactions();
-  }, []);
+  }, [id, apiUrl]);
 
   if (loading) {
     return <div>Loading transactions...</div>;

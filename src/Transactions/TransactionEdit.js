@@ -217,7 +217,10 @@ function TransactionEdit() {
                     className="btn btn-warning dropdown-toggle"
                     data-bs-toggle="dropdown"
                     aria-expanded={dropdownOpen}
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent event bubbling
+                      setDropdownOpen(!dropdownOpen);
+                    }}
                   >
                     More Actions
                   </button>
@@ -226,7 +229,7 @@ function TransactionEdit() {
                       <Link
                         to="transactionItems"
                         state={{ items: transactionItems }}
-                        className="btn btn-secondary"
+                        className="dropdown-item"
                       >
                         View Transaction Items
                       </Link>
@@ -234,7 +237,7 @@ function TransactionEdit() {
                     <li>
                       <button
                         type="button"
-                        className="dropdown-item btn btn-warning"
+                        className="dropdown-item"
                         onClick={() =>
                           navigate(`/customers/${id}/transactions`)
                         }
