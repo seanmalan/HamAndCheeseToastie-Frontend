@@ -19,14 +19,7 @@ export default function Dashboard() {
 
   return (
       <div className="container-fluid">
-        {/* Header */}
-        <header className="d-flex justify-content-between align-items-center p-3 bg-primary text-white">
-          <div className="user-profile">
-            <Link to={`/users/${user?.id}`} className="text-white">
-              <span>{user?.username || "User"}</span>
-            </Link>
-          </div>
-        </header>
+
 
         <div className="row">
           {/* Main Content */}
