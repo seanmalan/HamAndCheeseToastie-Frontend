@@ -76,7 +76,7 @@ const ProductsEdit = () => {
         })
         .then(() => {
           alert("Product updated successfully!");
-          navigate("/"); // Redirect back to the products list
+          navigate("/product");
         })
         .catch((err) => {
           setError(err.message);
