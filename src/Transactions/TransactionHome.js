@@ -1,138 +1,94 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import NotFound from "../Components/NotFound";
-import NZDateFormatter from "../Components/DateFormat";
-import PaymentMethod from "./Components/PaymentMethod";
+import TransactionList from "./TransactionList";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";  // Import the default styles for DatePicker
 
-const TransactionList = () => {
+const Home = () => {
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-
-  const apiUrl = process.env.REACT_APP_API_URL;
-
-  const fetchTransactions = () => {
-    setLoading(true);
-
-    // Build query parameters based on the selected dates
-    const queryParams = new URLSearchParams();
-    if (dateFrom) queryParams.append("dateFrom", dateFrom);
-    if (dateTo) queryParams.append("dateTo", dateTo);
-
-    fetch(`${apiUrl}/Transaction?${queryParams.toString()}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setTransactions(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  };
+  const [apiUrl] = useState(process.env.REACT_APP_API_URL);
 
   useEffect(() => {
-    fetchTransactions();
+    const today = new Date();
+    const past30Days = new Date(today);
+    past30Days.setDate(today.getDate() - 30);
+
+    setDateFrom(past30Days);
+    setDateTo(today);
   }, []);
 
-  const handleFilter = () => {
-    fetchTransactions();
+  const fetchTransactions = (dateFrom, dateTo) => {
+    setLoading(true);
+    setError(null);
+
+    const queryParams = new URLSearchParams();
+    if (dateFrom) queryParams.append("dateFrom", dateFrom.toISOString().split('T')[0]);
+    if (dateTo) queryParams.append("dateTo", dateTo.toISOString().split('T')[0]);
+
+    fetch(`${apiUrl}/Transaction?${queryParams.toString()}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTransactions(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error);
+          setLoading(false);
+        });
   };
 
-  console.log(transactions);
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (transactions.length === 0) return <NotFound item="Transactions" />;
-
   return (
-    <div className="container mt-4">
-      <h1 className="mb-5 text-center text-primary">Transaction List</h1>
+      <div className="container mt-4">
+        <h1 className="mb-5 text-center text-primary">Transactions</h1>
 
-      {/* Date Range Filter */}
-      <div className="row mb-4">
-        <div className="col">
-          <label>
-            Start Date:{" "}
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="form-control d-inline-block w-auto"
-            />
-          </label>
+        {/* Date Range Filter */}
+        <div className="row mb-4">
+          <div className="col">
+            <label>
+              Start Date:{" "}
+              <DatePicker
+                  selected={dateFrom}
+                  onChange={(date) => setDateFrom(date)}
+                  dateFormat="yyyy-MM-dd"
+                  className="form-control d-inline-block w-auto"
+              />
+            </label>
+          </div>
+          <div className="col">
+            <label>
+              End Date:{" "}
+              <DatePicker
+                  selected={dateTo}
+                  onChange={(date) => setDateTo(date)}
+                  dateFormat="yyyy-MM-dd"
+                  className="form-control d-inline-block w-auto"
+              />
+            </label>
+          </div>
+          <div className="col">
+            <button className="btn btn-primary mt-3" onClick={() => fetchTransactions(dateFrom, dateTo)}>
+              Filter
+            </button>
+          </div>
         </div>
-        <div className="col">
-          <label>
-            End Date:{" "}
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="form-control d-inline-block w-auto"
-            />
-          </label>
-        </div>
-        <div className="col">
-          <button className="btn btn-primary mt-3" onClick={handleFilter}>
-            Filter
-          </button>
-        </div>
+
+        {/* Render Transaction List */}
+        <TransactionList
+            transactions={transactions}
+            loading={loading}
+            error={error}
+            fetchTransactions={fetchTransactions}
+        />
       </div>
-
-      {/* Transaction Table */}
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Total Amount</th>
-            <th>Discount</th>
-            <th>Payment Method</th>
-            <th>Tax Amount</th>
-            <th>Cashier</th>
-            <th>Customer</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction.transactionId}>
-              <td>{transaction.transactionId}</td>
-              <td>
-                <NZDateFormatter
-                  date={transaction.transactionDate}
-                  length={"short"}
-                />
-              </td>
-              <td>${transaction.totalAmount.toFixed(2)}</td>
-              <td>${transaction.discount.toFixed(2)}</td>
-              <td>
-                <PaymentMethod paymentMethod={transaction.paymentMethod} />
-              </td>
-              <td>${transaction.taxAmount.toFixed(2)}</td>
-              <td><Link to={`/users/${transaction.userId}`}>{transaction.userId}</Link></td>
-              <td><Link to={`/Customers/${transaction.customer.customerId}`}>{transaction.customer.firstName + ' ' + transaction.customer.lastName}</Link></td>
-              <td>
-                <Link
-                  to={`/transactions/${transaction.transactionId}`}
-                  className="btn btn-primary btn-sm"
-                >
-                  View
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
   );
 };
 
-export default TransactionList;
+export default Home;
