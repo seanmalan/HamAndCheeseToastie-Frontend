@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import DeleteButton from "../Components/DeleteButton";
 import NotFound from "../Components/NotFound";
-import {AuthContext} from "../Context/AuthContext";
+import { AuthContext } from "../Context/AuthContext";
 
 const ProductsEdit = () => {
   const { id } = useParams(); // Get the product ID from the URL
@@ -13,44 +13,67 @@ const ProductsEdit = () => {
     description: "",
     brandName: "",
     weight: "",
-    categoryName: "",
+    categoryId: "", // Make sure this is initialized
+    categoryName: "", // And this
     currentStockLevel: "",
     minimumStockLevel: "",
     wholesalePrice: "",
     eaN13Barcode: "",
-
   });
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const { isAuthenticated, user } = useContext(AuthContext);
-
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
   // Fetch product data when the component loads
   useEffect(() => {
     fetch(`${apiUrl}/product/${id}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch product details.");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setProduct(data); // Set the product data
-          setLoading(false); // Stop loading
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoading(false);
-        });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch product details.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(`fetch product data: ${data}`);
+        setProduct(data); // Set the product data
+        setLoading(false); // Stop loading
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [id]);
+
+  useEffect(() => {
+    fetch(`${apiUrl}/Category`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched categories:", data);
+        setCategories(data);
+      })
+      .catch((err) => setError(err.message));
+  }, []);
 
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
+
+    if (name === "categoryId") {
+      const selectedCategory = categories.find(
+        (cat) => cat.categoryId === parseInt(value)
+      );
+      setProduct((prev) => ({
+        ...prev,
+        categoryId: parseInt(value),
+        categoryName: selectedCategory ? selectedCategory.name : "",
+      }));
+    } else {
+      setProduct((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -58,29 +81,59 @@ const ProductsEdit = () => {
   };
 
   // Handle form submission
+  const preventScroll = (e) => {
+    e.preventDefault();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Send the updated product to the API (PUT request)
+
+    // Create a copy of the product object with proper casing and data types
+    const productToSend = {
+      ID: parseInt(id),
+      Name: product.name,
+      BrandName: product.brandName,
+      Weight: product.weight,
+      CategoryId: product.categoryId ? parseInt(product.categoryId) : null,
+      CurrentStockLevel: parseInt(product.currentStockLevel),
+      MinimumStockLevel: parseInt(product.minimumStockLevel),
+      Price: parseFloat(product.price),
+      WholesalePrice: parseFloat(product.wholesalePrice),
+      EAN13Barcode: product.eaN13Barcode,
+    };
+
+    console.log("Product being sent:", productToSend); // Debug log
+
+    // Create FormData object
+    const formData = new FormData();
+    formData.append("product", JSON.stringify(productToSend));
+
+    if (imageFile) {
+      formData.append("imageFile", imageFile);
+    }
+
+    // Send the updated product to the API
     fetch(`${apiUrl}/product/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(product),
+      credentials: "include",
+      body: formData,
     })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to update product.");
-          }
-          return response.json();
-        })
-        .then(() => {
-          alert("Product updated successfully!");
-          navigate("/product");
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(`Failed to update product: ${text}`);
+          });
+        }
+        return response.json().catch(() => ({})); // Handle empty response
+      })
+      .then(() => {
+        alert("Product updated successfully!");
+        navigate("/products/" + id);
+      })
+      .catch((err) => {
+        setError(err.message);
+        console.error("Update error:", err);
+      });
   };
 
   console.log(product);
@@ -94,17 +147,18 @@ const ProductsEdit = () => {
   };
 
   return (
-      <div
-          className="d-flex justify-content-center align-items-center vh-100"
-          style={{ backgroundColor: "#d0e7f9" }}
-      >
+    <div
+      className="vh-100 d-flex flex-column"
+      style={{ backgroundColor: "#d0e7f9" }}
+    >
+      <div className="container py-4 flex-grow-1" style={{ overflowY: "auto" }}>
         <div
-            className="p-5 rounded shadow"
-            style={{
-              backgroundColor: "#f2f2f2",
-              maxWidth: "600px",
-              width: "100%",
-            }}
+          className="p-5 rounded shadow mx-auto"
+          style={{
+            backgroundColor: "#f2f2f2",
+            maxWidth: "600px",
+            width: "100%",
+          }}
         >
           <Link to={`/products`} className="btn btn-secondary mb-3">
             Back to Products
@@ -122,17 +176,17 @@ const ProductsEdit = () => {
               </div>
               <div className="col-md-8">
                 <img
-                    src={`${apiUrl}/${product.imagePath}`}
-                    alt={product.name}
-                    className="img-fluid mb-3"
-                    style={{maxWidth: "100%", height: "auto"}}
+                  src={`${apiUrl}${product.imagePath}`}
+                  alt={product.name}
+                  className="img-fluid mb-3"
+                  style={{ maxWidth: "100%", height: "auto" }}
                 />
                 <input
-                    type="file"
-                    className="form-control"
-                    id="productImage"
-                    name="productImage"
-                    onChange={handleImageChange}
+                  type="file"
+                  className="form-control"
+                  id="productImage"
+                  name="productImage"
+                  onChange={handleImageChange}
                 />
               </div>
             </div>
@@ -145,33 +199,32 @@ const ProductsEdit = () => {
               </div>
               <div className="col-md-8">
                 <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    name="name"
-                    value={product.name}
-                    onChange={handleChange}
-                    required
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  name="name"
+                  value={product.name}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
 
-
             <div className="row mb-3">
               <div className="col-md-4">
-                <label htmlFor="BrandName" className="form-label">
+                <label htmlFor="brandName" className="form-label">
                   Brand Name:
                 </label>
               </div>
               <div className="col-md-8">
                 <input
-                    type="text"
-                    className="form-control"
-                    id="BrandName"
-                    name="BrandName"
-                    value={product.brandName}
-                    onChange={handleChange}
-                    required
+                  type="text"
+                  className="form-control"
+                  id="brandName"
+                  name="brandName"
+                  value={product.brandName}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -184,33 +237,42 @@ const ProductsEdit = () => {
               </div>
               <div className="col-md-8">
                 <input
-                    type="string"
-                    className="form-control"
-                    id="weight"
-                    name="weight"
-                    value={product.weight}
-                    onChange={handleChange}
-                    required
+                  type="string"
+                  className="form-control"
+                  id="weight"
+                  name="weight"
+                  value={product.weight}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
 
             <div className="row mb-3">
               <div className="col-md-4">
-                <label htmlFor="category" className="form-label">
+                <label htmlFor="categoryId" className="form-label">
                   Category:
                 </label>
               </div>
               <div className="col-md-8">
-                <input
-                    type="text"
-                    className="form-control"
-                    id="category"
-                    name="category"
-                    value={product.categoryName}
-                    onChange={handleChange}
-                    required
-                />
+                <select
+                  className="form-control"
+                  id="categoryId"
+                  name="categoryId"
+                  value={product.categoryId || ""}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option
+                      key={category.categoryId}
+                      value={category.categoryId}
+                    >
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -222,13 +284,14 @@ const ProductsEdit = () => {
               </div>
               <div className="col-md-8">
                 <input
-                    type="number"
-                    className="form-control"
-                    id="currentStockLevel"
-                    name="currentStockLevel"
-                    value={product.currentStockLevel}
-                    onChange={handleChange}
-                    required
+                  type="number"
+                  className="form-control"
+                  id="currentStockLevel"
+                  name="currentStockLevel"
+                  value={product.currentStockLevel}
+                  onChange={handleChange}
+                  onWheel={preventScroll} // Add this
+                  required
                 />
               </div>
             </div>
@@ -241,92 +304,98 @@ const ProductsEdit = () => {
               </div>
               <div className="col-md-8">
                 <input
-                    type="number"
-                    className="form-control"
-                    id="minimumStockLevel"
-                    name="minimumStockLevel"
-                    value={product.minimumStockLevel}
-                    onChange={handleChange}
-                    required
+                  type="number"
+                  className="form-control"
+                  id="minimumStockLevel"
+                  name="minimumStockLevel"
+                  value={product.minimumStockLevel}
+                  onChange={handleChange}
+                  onWheel={preventScroll}
+                  required
                 />
               </div>
             </div>
 
             {user.role === 1 || user.role === 2 ? (
-            <div className="row mb-3">
-              <div className="col-md-4">
-                <label htmlFor="price" className="form-label">
-                  Price:
-                </label>
-              </div>
-              <div className="col-md-8">
-                <input
+              <div className="row mb-3">
+                <div className="col-md-4">
+                  <label htmlFor="price" className="form-label">
+                    Price:
+                  </label>
+                </div>
+                <div className="col-md-8">
+                  <input
                     type="number"
                     className="form-control"
                     id="price"
                     name="price"
                     value={product.price}
                     onChange={handleChange}
+                    onWheel={preventScroll}
                     required
-                />
+                  />
+                </div>
               </div>
-            </div>
             ) : null}
+
             {user.role === 1 || user.role === 2 ? (
-            <div className="row mb-3">
-              <div className="col-md-4">
-                <label htmlFor="wholesalePrice" className="form-label">
-                  Wholesale Price:
-                </label>
-              </div>
-              <div className="col-md-8">
-                <input
+              <div className="row mb-3">
+                <div className="col-md-4">
+                  <label htmlFor="wholesalePrice" className="form-label">
+                    Wholesale Price:
+                  </label>
+                </div>
+                <div className="col-md-8">
+                  <input
                     type="number"
                     className="form-control"
                     id="wholesalePrice"
                     name="wholesalePrice"
                     value={product.wholesalePrice}
                     onChange={handleChange}
+                    onWheel={preventScroll}
                     required
-                />
+                  />
+                </div>
               </div>
-            </div>
             ) : null}
 
             {user.role === 1 ? (
-                <div className="row mb-3">
-                  <div className="col-md-4">
-                    <label htmlFor="EAN13Barcode" className="form-label">
-                      EAN13 Barcode:
-                    </label>
-                  </div>
-                  <div className="col-md-8">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="EAN13Barcode"
-                        name="EAN13Barcode"
-                        value={product.eaN13Barcode}
-                        onChange={handleChange}
-                        required
-                    />
-                  </div>
+              <div className="row mb-3">
+                <div className="col-md-4">
+                  <label htmlFor="EAN13Barcode" className="form-label">
+                    EAN13 Barcode:
+                  </label>
                 </div>
+                <div className="col-md-8">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="EAN13Barcode"
+                    name="EAN13Barcode"
+                    value={product.eaN13Barcode}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             ) : null}
 
             <div className="mb-3 d-flex justify-content-between align-items-center">
-              <DeleteButton productId={id} onDeleteSuccess={handleDeleteSuccess} component={"Product"}/>
+              <DeleteButton
+                productId={id}
+                onDeleteSuccess={handleDeleteSuccess}
+                component={"Product"}
+              />
               <button type="submit" className="btn btn-primary">
                 Update Product
               </button>
             </div>
           </form>
-
-
         </div>
       </div>
+    </div>
   );
 };
-
 
 export default ProductsEdit;
