@@ -24,6 +24,8 @@ import Footer from "./Components/Footer";
 import Sidebar from "./Components/Sidebar";
 import TransactionsItems from "./Transactions/TransactionItems";
 import UserTransactions from "./Users/UserTransactions";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -179,6 +181,7 @@ function App() {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 }

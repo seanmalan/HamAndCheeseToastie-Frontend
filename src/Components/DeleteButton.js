@@ -1,24 +1,38 @@
+// components/DeleteButton.js
 import React from "react";
+import { toast } from "react-toastify";
+import { useConfirmation } from "../hooks/useConfirmation";
 
 const DeleteButton = ({ endpoint, id, onDeleteSuccess, component }) => {
-  const handleDelete = async (e) => {
+  const { showConfirmation } = useConfirmation();
+
+  const handleDelete = (e) => {
     e.preventDefault();
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete this item: ${component}?`
+    showConfirmation(
+      `Are you sure you want to delete this ${component}?`,
+      performDelete
     );
+  };
 
-    if (!confirmDelete) return;
-
+  const performDelete = async () => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("No authentication token found. Please log in.");
+      toast.error("No authentication token found. Please log in.", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "colored",
+      });
       return;
     }
 
+    const loadingToastId = toast.loading(`Deleting ${component}...`, {
+      position: "top-center",
+    });
+
     try {
-      const response = await fetch(`${apiUrl}/api/${endpoint}/${id}`, {
+      const response = await fetch(`${apiUrl}/${endpoint}/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -26,25 +40,29 @@ const DeleteButton = ({ endpoint, id, onDeleteSuccess, component }) => {
         },
       });
 
+      // Dismiss loading toast
+      toast.dismiss(loadingToastId);
+
       if (response.status === 204) {
-        // Success case: No Content
-        alert(`${component} deleted successfully!`);
         if (onDeleteSuccess) {
-          onDeleteSuccess(id); // Pass the ID to the callback if needed
+          onDeleteSuccess(id);
         }
         return;
       }
 
       if (!response.ok) {
-        // Handle non-204 error responses
-        const errorMessage = await response.text(); // Read error body, if available
+        const errorMessage = await response.text();
         throw new Error(
           errorMessage ||
             `Failed to delete ${component} (Status: ${response.status})`
         );
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "colored",
+      });
     }
   };
 
