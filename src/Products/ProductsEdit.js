@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import DeleteButton from "../Components/DeleteButton";
 import NotFound from "../Components/NotFound";
 import { AuthContext } from "../Context/AuthContext";
+import { useCustomToast } from "../hooks/useCustomToast";
 
 const ProductsEdit = () => {
   const { id } = useParams(); // Get the product ID from the URL
@@ -25,6 +26,7 @@ const ProductsEdit = () => {
   const [error, setError] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const { isAuthenticated, user } = useContext(AuthContext);
+  const { showToast } = useCustomToast();
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -38,7 +40,6 @@ const ProductsEdit = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(`fetch product data: ${data}`);
         setProduct(data); // Set the product data
         setLoading(false); // Stop loading
       })
@@ -127,12 +128,12 @@ const ProductsEdit = () => {
         return response.json().catch(() => ({})); // Handle empty response
       })
       .then(() => {
-        alert("Product updated successfully!");
+        showToast("Product", "success");
         navigate("/products/" + id);
       })
       .catch((err) => {
         setError(err.message);
-        console.error("Update error:", err);
+        showToast("Product", "error");
       });
   };
 
@@ -143,6 +144,7 @@ const ProductsEdit = () => {
   if (!product) return <NotFound item="Product" />;
 
   const handleDeleteSuccess = () => {
+    showToast("Product", "delete", `Product ${product.name} has been deleted!`);
     navigate("/products");
   };
 
@@ -383,7 +385,8 @@ const ProductsEdit = () => {
 
             <div className="mb-3 d-flex justify-content-between align-items-center">
               <DeleteButton
-                productId={id}
+                endpoint={"product"}
+                id={id}
                 onDeleteSuccess={handleDeleteSuccess}
                 component={"Product"}
               />

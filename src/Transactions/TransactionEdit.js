@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import NZDateFormatter from "../Components/DateFormat";
 import { AuthContext } from "../Context/AuthContext";
 
@@ -25,6 +26,8 @@ function TransactionEdit() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
+    const loadingToast = toast.loading("Fetching transaction details...");
+
     fetch(`${apiUrl}/Transaction/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -37,10 +40,18 @@ function TransactionEdit() {
         setCustomer(data.customer || {});
         setTransactionItems(data.transactionItems || []);
         setLoading(false);
+        toast.dismiss(loadingToast);
       })
       .catch((error) => {
         setError(error.message);
         setLoading(false);
+        toast.update(loadingToast, {
+          render: `Error: ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          theme: "colored",
+        });
       });
   }, [id]);
 
@@ -52,10 +63,19 @@ function TransactionEdit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+
     if (!token) {
-      alert("No authentication token found. Please log in.");
+      toast.error("No authentication token found. Please log in.", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "colored",
+      });
       return;
     }
+
+    const loadingToast = toast.loading("Updating transaction...", {
+      position: "top-center",
+    });
 
     fetch(`${apiUrl}/Transaction/${id}`, {
       method: "PUT",
@@ -67,14 +87,26 @@ function TransactionEdit() {
     })
       .then((response) => {
         if (response.ok) {
-          alert("Transaction updated successfully!");
+          toast.update(loadingToast, {
+            render: "Transaction updated successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+            theme: "colored",
+          });
           navigate(`/Transactions/${id}`);
         } else {
           throw new Error("Failed to update the transaction.");
         }
       })
       .catch((err) => {
-        alert(err.message);
+        toast.update(loadingToast, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          theme: "colored",
+        });
       });
   };
 
@@ -83,19 +115,19 @@ function TransactionEdit() {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center vh-100"
+      className="vh-100 d-flex flex-column"
       style={{ backgroundColor: "#d0e7f9" }}
     >
-      <div
-        className="p-5 rounded shadow"
-        style={{
-          backgroundColor: "#f2f2f2",
-          maxWidth: "600px",
-          width: "100%",
-        }}
-      >
-        <div className="container mt-5">
-          <Link to={`/transactions`} className="btn btn-outline-dark mb-3">
+      <div className="container py-4 flex-grow-1" style={{ overflowY: "auto" }}>
+        <div
+          className="p-5 rounded shadow mx-auto"
+          style={{
+            backgroundColor: "#f2f2f2",
+            maxWidth: "600px",
+            width: "100%",
+          }}
+        >
+          <Link to={`/products`} className="btn btn-secondary mb-3">
             Back to Transactions
           </Link>
           <h1 className="text-center mb-4">Edit Transaction</h1>
