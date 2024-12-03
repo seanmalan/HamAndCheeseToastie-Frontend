@@ -7,19 +7,23 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [publicKey, setPublicKey] = useState("");
+  const [error, setError] = useState("");
   const { login, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // Fetch public key when component mounts
   useEffect(() => {
     const fetchPublicKey = async () => {
       try {
         const response = await fetch(`${apiUrl}/Auth/public-key`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch public key");
+        }
         const data = await response.json();
         setPublicKey(data.publicKey);
       } catch (error) {
+        setError("Failed to initialize secure connection");
         console.error("Error fetching public key:", error);
       }
     };
@@ -28,14 +32,30 @@ const Login = () => {
   }, [apiUrl]);
 
   const encryptPassword = (password) => {
-    const encrypt = new JSEncrypt();
-    encrypt.setPublicKey(publicKey);
-    return encrypt.encrypt(password);
+    try {
+      const encrypt = new JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      const encrypted = encrypt.encrypt(password);
+      if (!encrypted) {
+        throw new Error("Encryption failed");
+      }
+      return encrypted;
+    } catch (error) {
+      console.error("Encryption error:", error);
+      throw error;
+    }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
+      if (!publicKey) {
+        setError("Secure connection not established. Please try again.");
+        return;
+      }
+
       const encryptedPassword = encryptPassword(password);
 
       const response = await fetch(`${apiUrl}/Auth/login`, {
@@ -48,6 +68,9 @@ const Login = () => {
       });
 
       const data = await response.json();
+
+      console.log(data);
+
       if (response.ok) {
         login({
           token: data.token,
@@ -58,23 +81,22 @@ const Login = () => {
         });
         navigate("/dashboard");
       } else {
-        console.error("Login failed:", data.message);
+        setError(data.message || "Login failed");
+        console.error("Login failed:", data);
       }
     } catch (error) {
+      setError("An error occurred during login");
       console.error("Error:", error);
     }
   };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <div className="login-container">
       <div className="login-form">
         <h2>Login</h2>
+        {error && (
+          <div className="error-message text-red-500 mb-4">{error}</div>
+        )}
         <form onSubmit={handleLogin}>
           <div className="input-group">
             <input
@@ -94,7 +116,7 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className="submit-btn">
+          <button type="submit" className="submit-btn" disabled={!publicKey}>
             Login
           </button>
         </form>
