@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import NotFound from '../Components/NotFound';
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import NotFound from "../Components/NotFound";
 
 function CategoriesEdit() {
   const { id } = useParams(); // Get id from URL
@@ -10,6 +10,7 @@ function CategoriesEdit() {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  console.log(products);
 
   // Fetch products linked to this id
   useEffect(() => {
@@ -17,7 +18,7 @@ function CategoriesEdit() {
       .then((response) => {
         if (!response.ok) {
           console.log(response);
-          throw new Error('Failed to fetch products for this category.');
+          throw new Error("Failed to fetch products for this category.");
         }
         return response.json();
       })
@@ -37,43 +38,41 @@ function CategoriesEdit() {
 
   console.log(products);
 
-  
   return (
-      <div className="page">
-        <div className="form-container">
-          <Link to={`/categories`} className="btn btn-secondary">
-            Back to Categories
-          </Link>
+    <div className="page">
+      <div className="form-container">
+        <Link to={`/categories`} className="btn btn-secondary">
+          Back to Categories
+        </Link>
 
-          {products.categoryName}
-          <h1>Products in Category {id}</h1>
-          {products.length > 0 ? (
-              <ul>
-                {products.map((product) => (
-                    <li key={product.id}>
-                      <h2>{product.name}</h2>
-                      <p>Brand: {product.brandName}</p>
-                      <p>Price: ${product.price}</p>
-                      <p>Stock Level: {product.currentStockLevel}</p>
+        {products.categoryName}
+        <h1>Products in Category {id}</h1>
+        {products.length > 0 ? (
+          <ul>
+            {products.map((product) => (
+              <li key={product.id}>
+                <h2>{product.name}</h2>
+                <p>Brand: {product.brandName}</p>
+                <p>Price: ${product.price}</p>
+                <p>Stock Level: {product.currentStockLevel}</p>
 
-
-                      <button className="btn btn-primary btn-sm">
-                      <Link
-                          to={`/Products/${product.id}`}
-                          className="btn btn-primary btn-sm"
-                      >
-                        View
-                      </Link>
-                        </button>
-                    </li>
-                ))}
-              </ul>
-          ) : (
-              <p>No products found for this category.</p>
-          )}
-        </div>
+                <button className="btn btn-primary btn-sm">
+                  <Link
+                    to={`/Products/${product.id}`}
+                    className="btn btn-primary btn-sm"
+                  >
+                    View
+                  </Link>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No products found for this category.</p>
+        )}
       </div>
-        );
-        }
+    </div>
+  );
+}
 
-        export default CategoriesEdit;
+export default CategoriesEdit;

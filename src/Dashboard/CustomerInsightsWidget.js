@@ -33,6 +33,8 @@ function CustomerInsightsWidget() {
       });
   }, [apiUrl]);
 
+  console.log(customerInsights);
+
   if (loading) {
     return <div className="text-center">Loading...</div>; // Loading state
   }
@@ -62,7 +64,10 @@ function CustomerInsightsWidget() {
               <td>{insight.lastName}</td>
               <td>{insight.email}</td>
               <td>
-                <NZDateFormatter date={insight.lastTransactionDate} />
+                <NZDateFormatter
+                  date={insight.lastTransactionDate}
+                  length="short"
+                />
               </td>
               <td>${insight.totalSpent}</td>
               <td>
