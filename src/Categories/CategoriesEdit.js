@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import NotFound from '../Components/NotFound';
@@ -10,10 +11,9 @@ function CategoriesEdit() {
   const [isNotFound, setIsNotFound] = useState(false);
   const [error, setError] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
-
   
   const categoryName = state ? state.categoryName : "Unknown"; // Default to "Unknown" if no state is passed
-  
+
   // Fetch products linked to this id
   useEffect(() => {
     setLoading(true);
